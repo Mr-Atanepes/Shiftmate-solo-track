@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0B132B" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>ShiftMate Pro</title>
+<style>
+/* ============================================================
+   RESET & TOKENS
+   ============================================================ */
+*,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+:root{
+  --bg:#0B132B;
+  --surface:#151F3D;
+  --surface-2:#1B2748;
+  --surface-3:#101A33;
+  --border:rgba(255,255,255,.075);
+  --border-strong:rgba(255,255,255,.13);
+  --text:#E9EEFA;
+  --muted:#7E8CB4;
+  --muted-2:#5B6992;
+  --cyan:#1AD1E5;
+  --cyan-deep:#0FA9BC;
+  --green:#22C55E;
+  --green-deep:#12A150;
+  --blue:#2F6BFF;
+  --blue-deep:#1E4FD8;
+  --red:#EF4444;
+  --sheet-ease:cubic-bezier(.22,1,.36,1);
+}
+html{-webkit-text-size-adjust:100%;}
+body{
+  background-color:#0B132B;
+  background-image:radial-gradient(130% 62% at 50% -12%, #1B2C58 0%, rgba(11,19,43,0) 62%);
+  background-repeat:no-repeat;
+  background-attachment:fixed;
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;
+  line-height:1.4;
+  min-height:100vh;
+  overflow-x:hidden;
+  padding-bottom:calc(40px + env(safe-area-inset-bottom));
+}
+body.locked{overflow:hidden;}
+button{font-family:inherit;color:inherit;background:none;border:none;padding:0;cursor:pointer;}
+input{font-family:inherit;}
+svg{display:block;}
+
+/* ============================================================
+   TOP BAR
+   ============================================================ */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:60;
+  padding-top:env(safe-area-inset-top);
+  background:rgba(11,19,43,.84);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  backdrop-filter:blur(18px) saturate(140%);
+  border-bottom:1px solid var(--border);
+}
+.topbar-inner{
+  height:60px;max-width:480px;margin:0 auto;
+  display:flex;align-items:center;gap:4px;padding:0 8px;
+}
+.icon-btn{
+  width:48px;height:48px;flex:none;
+  display:grid;place-items:center;
+  border-radius:14px;color:#C6D2EE;
+  transition:background .18s ease,transform .12s ease,color .18s ease;
+}
+.icon-btn:active{transform:scale(.9);background:rgba(255,255,255,.07);}
+.icon-btn svg{width:22px;height:22px;}
+.icon-btn.small{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.05);}
+.icon-btn.small svg{width:18px;height:18px;}
+.brand{display:flex;align-items:center;gap:9px;flex:1;min-width:0;margin-left:2px;}
+.brand-ico{
+  width:32px;height:32px;flex:none;border-radius:10px;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,rgba(26,209,229,.18),rgba(47,107,255,.18));
+  border:1px solid rgba(26,209,229,.28);
+  color:var(--cyan);
+}
+.brand-ico svg{width:17px;height:17px;}
+.brand h1{
+  margin:0;font-size:17px;font-weight:750;letter-spacing:-.3px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;
+}
+.brand h1 .pro{
+  background:linear-gradient(135deg,#1AD1E5,#2F6BFF);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+  font-weight:800;
+}
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+.app{
+  max-width:480px;margin:0 auto;
+  padding:calc(60px + env(safe-area-inset-top) + 14px) 14px 0;
+}
+
+/* ============================================================
+   COMPANY CARD
+   ============================================================ */
+.company-card{
+  position:relative;
+  background:linear-gradient(180deg,#18223F 0%,#131C36 100%);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:16px 16px 14px;
+  box-shadow:0 20px 44px -26px rgba(0,0,0,.95);
+}
+.company-label{
+  font-size:10.5px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;
+  color:var(--muted-2);margin-bottom:2px;
+}
+.company-row{display:flex;align-items:center;gap:10px;}
+.company-input{
+  flex:1;min-width:0;
+  font-size:23px;font-weight:750;letter-spacing:-.5px;
+  color:#FFFFFF;background:transparent;border:none;outline:none;
+  padding:4px 0;line-height:1.2;
+}
+.company-input::placeholder{color:var(--muted-2);}
+.caret-btn{
+  width:48px;height:48px;flex:none;border-radius:15px;
+  display:grid;place-items:center;
+  background:rgba(255,255,255,.055);
+  border:1px solid var(--border);
+  color:#A9B8DC;
+  transition:transform .22s var(--sheet-ease),background .18s ease,color .18s ease;
+}
+.caret-btn:active{transform:scale(.92);}
+.caret-btn.open{transform:rotate(180deg);background:rgba(26,209,229,.14);color:var(--cyan);border-color:rgba(26,209,229,.3);}
+.caret-btn svg{width:18px;height:18px;}
+.company-sub{
+  display:flex;align-items:center;gap:8px;
+  margin-top:11px;font-size:12px;font-weight:600;color:var(--muted);
+  letter-spacing:.1px;
+}
+.pulse{
+  width:7px;height:7px;border-radius:50%;flex:none;background:var(--cyan);
+  animation:pulse 2.2s infinite;
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(26,209,229,.55);}
+  70%{box-shadow:0 0 0 9px rgba(26,209,229,0);}
+  100%{box-shadow:0 0 0 0 rgba(26,209,229,0);}
+}
+
+/* Company dropdown */
+.company-menu{
+  position:absolute;left:12px;right:12px;top:calc(100% + 8px);
+  background:#0F1830;
+  border:1px solid var(--border-strong);
+  border-radius:18px;padding:6px;z-index:45;
+  box-shadow:0 28px 56px -14px rgba(0,0,0,.9);
+  opacity:0;transform:translateY(-8px) scale(.97);
+  pointer-events:none;transform-origin:top center;
+  transition:opacity .18s ease,transform .2s var(--sheet-ease);
+  max-height:264px;overflow-y:auto;
+}
+.company-menu.open{opacity:1;transform:none;pointer-events:auto;}
+.cm-item{
+  width:100%;min-height:48px;
+  display:flex;align-items:center;gap:10px;
+  padding:11px 14px;border-radius:13px;
+  font-size:14.5px;font-weight:650;color:#D3DCF2;text-align:left;
+  transition:background .15s ease;
+}
+.cm-item:active{background:rgba(255,255,255,.07);}
+.cm-item.is-current{background:rgba(26,209,229,.12);color:var(--cyan);}
+.cm-item .cm-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cm-item svg{width:16px;height:16px;flex:none;}
+.cm-item.add{color:var(--muted);}
+
+/* ============================================================
+   TABS  (worker self-tracking only)
+   ============================================================ */
+.tabs{margin-top:16px;display:flex;flex-direction:column;}
+.tab{
+  width:100%;min-height:62px;
+  display:flex;align-items:center;gap:12px;
+  padding:11px 14px;margin-bottom:8px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:17px;
+  color:var(--text);text-align:left;
+  transition:background .2s ease,border-color .2s ease,color .2s ease,transform .12s ease,box-shadow .25s ease;
+}
+.tab:last-child{margin-bottom:0;}
+.tab:active{transform:scale(.985);}
+.tab.is-active{
+  background:linear-gradient(135deg,#1AD1E5 0%,#12B9CE 100%);
+  border-color:#5BE7F6;
+  color:#04222B;
+  box-shadow:0 12px 28px -10px rgba(26,209,229,.6);
+}
+.tab-ico{
+  width:38px;height:38px;flex:none;border-radius:12px;
+  display:grid;place-items:center;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.05);
+  color:#9FB0D6;
+  transition:background .2s ease,color .2s ease,border-color .2s ease;
+}
+.tab-ico svg{width:19px;height:19px;}
+.tab.is-active .tab-ico{background:rgba(4,34,43,.15);border-color:rgba(4,34,43,.12);color:#04222B;}
+.tab-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;}
+.tab-title{font-size:14.5px;font-weight:720;letter-spacing:-.1px;}
+.tab-desc{font-size:11.5px;font-weight:550;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tab.is-active .tab-desc{color:rgba(4,34,43,.68);}
+.tab-badge{
+  flex:none;min-width:30px;height:26px;padding:0 9px;
+  display:grid;place-items:center;
+  font-size:11.5px;font-weight:750;letter-spacing:.2px;
+  border-radius:9px;
+  background:rgba(255,255,255,.06);
+  color:var(--muted);
+  transition:background .2s ease,color .2s ease;
+}
+.tab.is-active .tab-badge{background:rgba(4,34,43,.16);color:#04222B;}
+
+/* ============================================================
+   CALENDAR
+   ============================================================ */
+.cal-card{
+  margin-top:16px;
+  background:linear-gradient(180deg,rgba(23,33,64,.92) 0%,rgba(16,24,48,.92) 100%);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:14px 12px 14px;
+  box-shadow:0 20px 44px -28px rgba(0,0,0,.95);
+}
+.cal-head{display:flex;align-items:center;gap:10px;padding:2px 2px 12px;}
+.cal-title-wrap{flex:1;min-width:0;text-align:center;}
+.cal-month{font-size:16.5px;font-weight:750;letter-spacing:-.3px;}
+.cal-sub{font-size:11.5px;font-weight:600;color:var(--muted);margin-top:1px;}
+.nav-btn{
+  width:44px;height:44px;flex:none;border-radius:13px;
+  display:grid;place-items:center;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--border);
+  color:#B6C4E6;
+  transition:transform .14s ease,background .18s ease;
+}
+.nav-btn:active{transform:scale(.9);background:rgba(255,255,255,.1);}
+.nav-btn svg{width:18px;height:18px;}
+.weekdays{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:5px;
+  padding:0 1px 6px;
+}
+.weekdays span{
+  text-align:center;font-size:10.5px;font-weight:750;
+  letter-spacing:.7px;text-transform:uppercase;color:var(--muted-2);
+}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
+
+.cell{
+  position:relative;
+  min-height:48px;
+  border-radius:13px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.028);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;padding:0;
+  font-size:13.5px;font-weight:700;letter-spacing:-.2px;
+  color:#C7D3EE;
+  transition:transform .12s ease,background .2s ease,border-color .2s ease,box-shadow .2s ease,color .2s ease;
+  user-select:none;-webkit-user-select:none;
+}
+.cell .d{line-height:1;}
+.cell .s{width:12px;height:12px;display:grid;place-items:center;opacity:.95;}
+.cell .s svg{width:11px;height:11px;}
+.cell:active{transform:scale(.93);}
+.cell.out{
+  color:#39466B;
+  background:rgba(255,255,255,.012);
+  border-color:rgba(255,255,255,.035);
+}
+.cell:disabled{opacity:1;cursor:default;}
+.cell.today{outline:2px solid #6AA8FF;outline-offset:-2px;}
+.cell.today:not(.worked):not(.off){
+  background:linear-gradient(180deg,#2F6BFF 0%,#1E4FD8 100%);
+  border-color:#5C93FF;
+  color:#FFFFFF;
+  box-shadow:0 8px 20px -8px rgba(47,107,255,.85);
+}
+.cell.worked{
+  background:linear-gradient(180deg,#25CE63 0%,#12A150 100%);
+  border-color:#48E184;
+  color:#03230F;
+  box-shadow:0 8px 20px -10px rgba(34,197,94,.9);
+}
+.cell.off{
+  background:linear-gradient(180deg,#3A4870 0%,#2A3557 100%);
+  border-color:#4C5D8C;
+  color:#D6E0F7;
+}
+.legend{
+  display:flex;align-items:center;justify-content:center;gap:16px;
+  padding:13px 4px 2px;margin-top:4px;
+  border-top:1px solid rgba(255,255,255,.05);
+}
+.legend .lg{
+  display:flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:650;color:var(--muted);
+}
+.legend .dot{width:9px;height:9px;border-radius:3px;flex:none;}
+.dot.green{background:linear-gradient(180deg,#25CE63,#12A150);}
+.dot.slate{background:linear-gradient(180deg,#3A4870,#2A3557);}
+.dot.blue{background:linear-gradient(180deg,#2F6BFF,#1E4FD8);}
+
+/* ============================================================
+   OVERLAY / SHEETS / DRAWER
+   ============================================================ */
+.overlay{
+  position:fixed;inset:0;z-index:80;
+  background:rgba(3,7,18,.68);
+  -webkit-backdrop-filter:blur(4px);
+  backdrop-filter:blur(4px);
+  opacity:0;pointer-events:none;
+  transition:opacity .28s ease;
+}
+.overlay.open{opacity:1;pointer-events:auto;}
+
+.sheet{
+  position:fixed;left:0;right:0;bottom:0;z-index:90;
+  max-width:480px;margin:0 auto;
+  background:linear-gradient(180deg,#18223F 0%,#111A33 100%);
+  border-top:1px solid rgba(255,255,255,.1);
+  border-radius:26px 26px 0 0;
+  padding:10px 16px calc(20px + env(safe-area-inset-bottom));
+  transform:translateY(110%);
+  visibility:hidden;
+  transition:transform .36s var(--sheet-ease),visibility .36s;
+  box-shadow:0 -22px 60px -18px rgba(0,0,0,.9);
+}
+.sheet.open{transform:translateY(0);visibility:visible;}
+.sheet-grip{
+  width:40px;height:4px;border-radius:99px;
+  background:rgba(255,255,255,.16);
+  margin:2px auto 14px;
+}
+.sheet-head{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:0 2px 14px;
+}
+.sheet-title{font-size:18px;font-weight:750;letter-spacing:-.35px;}
+.sheet-sub{font-size:12.5px;font-weight:600;color:var(--muted);margin-top:3px;}
+.sheet-btn{
+  width:100%;min-height:60px;
+  display:flex;align-items:center;gap:13px;
+  padding:12px 14px;margin-bottom:9px;
+  border-radius:17px;
+  background:rgba(255,255,255,.035);
+  border:1px solid var(--border);
+  text-align:left;
+  transition:transform .12s ease,background .18s ease,border-color .18s ease;
+}
+.sheet-btn:last-child{margin-bottom:0;}
+.sheet-btn:active{transform:scale(.98);}
+.sb-ico{
+  width:38px;height:38px;flex:none;border-radius:12px;
+  display:grid;place-items:center;
+}
+.sb-ico svg{width:19px;height:19px;}
+.sb-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+.sb-title{font-size:15px;font-weight:720;letter-spacing:-.1px;}
+.sb-desc{font-size:11.5px;font-weight:550;color:var(--muted);}
+.sheet-btn.worked{border-color:rgba(34,197,94,.28);}
+.sheet-btn.worked .sb-ico{background:rgba(34,197,94,.14);color:#2FD873;}
+.sheet-btn.off{border-color:rgba(148,163,184,.22);}
+.sheet-btn.off .sb-ico{background:rgba(148,163,184,.13);color:#A8B6D4;}
+.sheet-btn.clear{border-color:rgba(239,68,68,.26);}
+.sheet-btn.clear .sb-ico{background:rgba(239,68,68,.13);color:#F87171;}
+.sheet-btn.danger-armed{
+  border-color:rgba(239,68,68,.75);
+  background:rgba(239,68,68,.14);
+}
+
+/* Settings rows */
+.set-row{
+  display:flex;align-items:center;gap:12px;
+  min-height:60px;padding:10px 14px;margin-bottom:9px;
+  border-radius:17px;
+  background:rgba(255,255,255,.035);
+  border:1px solid var(--border);
+}
+.set-row .sb-body{gap:2px;}
+.switch{
+  width:52px;height:31px;flex:none;border-radius:99px;
+  background:rgba(255,255,255,.12);
+  border:1px solid var(--border);
+  position:relative;
+  transition:background .22s ease,border-color .22s ease;
+}
+.switch::after{
+  content:"";position:absolute;top:3px;left:3px;
+  width:23px;height:23px;border-radius:50%;
+  background:#8E9DC2;
+  transition:transform .24s var(--sheet-ease),background .22s ease;
+}
+.switch[aria-checked="true"]{background:linear-gradient(135deg,#1AD1E5,#0FA9BC);border-color:#5BE7F6;}
+.switch[aria-checked="true"]::after{transform:translateX(21px);background:#04222B;}
+
+/* Drawer */
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;z-index:95;
+  width:min(86vw,338px);
+  background:linear-gradient(180deg,#131D38 0%,#0D1630 100%);
+  border-left:1px solid var(--border-strong);
+  transform:translateX(102%);
+  visibility:hidden;
+  transition:transform .36s var(--sheet-ease),visibility .36s;
+  padding:calc(18px + env(safe-area-inset-top)) 16px calc(20px + env(safe-area-inset-bottom));
+  display:flex;flex-direction:column;
+  box-shadow:-24px 0 60px -20px rgba(0,0,0,.9);
+}
+.drawer.open{transform:translateX(0);visibility:visible;}
+.drawer-head{display:flex;align-items:flex-start;gap:12px;padding-bottom:18px;}
+.drawer-title{font-size:16.5px;font-weight:750;letter-spacing:-.3px;}
+.drawer-sub{font-size:12px;font-weight:600;color:var(--cyan);margin-top:3px;}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px;}
+.stat{
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  border-radius:16px;padding:13px 8px;text-align:center;
+}
+.stat-num{font-size:20px;font-weight:780;letter-spacing:-.6px;color:#FFFFFF;}
+.stat-lbl{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted-2);margin-top:3px;}
+.drawer-actions{display:flex;flex-direction:column;gap:9px;}
+.drawer-btn{
+  width:100%;min-height:52px;
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  border-radius:16px;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--border);
+  font-size:14px;font-weight:700;color:#D3DCF2;
+  transition:transform .12s ease,background .18s ease,border-color .18s ease;
+}
+.drawer-btn:active{transform:scale(.98);background:rgba(255,255,255,.09);}
+.drawer-btn svg{width:17px;height:17px;}
+.drawer-btn.danger{color:#F87171;border-color:rgba(239,68,68,.26);}
+.drawer-btn.danger.armed{background:rgba(239,68,68,.15);border-color:rgba(239,68,68,.7);}
+.drawer-foot{
+  margin-top:auto;padding-top:18px;text-align:center;
+  font-size:11px;font-weight:600;color:var(--muted-2);letter-spacing:.2px;
+}
+
+/* ============================================================
+   TOAST
+   ============================================================ */
+.toast{
+  position:fixed;left:50%;bottom:calc(26px + env(safe-area-inset-bottom));
+  z-index:120;
+  transform:translate(-50%,24px);
+  max-width:calc(100vw - 40px);
+  padding:13px 20px;
+  border-radius:15px;
+  background:rgba(27,39,72,.97);
+  border:1px solid rgba(255,255,255,.13);
+  color:#E9EEFA;
+  font-size:13.5px;font-weight:650;letter-spacing:-.1px;
+  text-align:center;
+  box-shadow:0 18px 40px -12px rgba(0,0,0,.85);
+  opacity:0;pointer-events:none;
+  transition:opacity .26s ease,transform .3s var(--sheet-ease);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.toast.show{opacity:1;transform:translate(-50%,0);}
+
+@media (max-width:340px){
+  .company-input{font-size:20px;}
+  .tab-desc{display:none;}
+  .cell{font-size:12.5px;min-height:46px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================= TOP BAR ============================= -->
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="icon-btn" id="btnSettings" aria-label="Open settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3.1"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+      </svg>
+    </button>
+
+    <div class="brand">
+      <span class="brand-ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4.6" width="18" height="16" rx="3.4"/>
+          <path d="M3 9.6h18M8 2.6v4M16 2.6v4"/>
+        </svg>
+      </span>
+      <h1>ShiftMate <span class="pro">Pro</span></h1>
+    </div>
+
+    <button class="icon-btn" id="btnMenu" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round">
+        <path d="M4 7h16M4 12h12M4 17h16"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<!-- ============================= APP ============================= -->
+<main class="app">
+
+  <!-- Company -->
+  <section class="company-card">
+    <div class="company-row">
+      <div style="flex:1;min-width:0;">
+        <div class="company-label">Active Company</div>
+        <input id="companyInput" class="company-input" type="text" value="Acibadem"
+               autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Active company" />
+      </div>
+      <button class="caret-btn" id="btnCompanyMenu" aria-label="Choose company" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 9.5l6 6 6-6"/>
+        </svg>
+      </button>
+    </div>
+    <div class="company-sub">
+      <span class="pulse" aria-hidden="true"></span>
+      <span id="companySub">Self Log Filter Active</span>
+    </div>
+
+    <div class="company-menu" id="companyMenu" role="menu"></div>
+  </section>
+
+  <!-- Tabs — worker self-tracking only -->
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Tracking modes">
+
+    <button class="tab is-active" data-tab="self" type="button" role="tab" aria-selected="true">
+      <span class="tab-ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="3.6"/>
+          <path d="M4.8 20c.6-3.4 3.6-5.4 7.2-5.4s6.6 2 7.2 5.4"/>
+        </svg>
+      </span>
+      <span class="tab-body">
+        <span class="tab-title">Self Log</span>
+        <span class="tab-desc">Log your own shifts</span>
+      </span>
+      <span class="tab-badge">0</span>
+    </button>
+
+    <button class="tab" data-tab="attend" type="button" role="tab" aria-selected="false">
+      <span class="tab-ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3.4" y="3.4" width="17.2" height="17.2" rx="4.2"/>
+          <path d="M8 12.4l2.6 2.6L16.2 9.4"/>
+        </svg>
+      </span>
+      <span class="tab-body">
+        <span class="tab-title">Log Attendance</span>
+        <span class="tab-desc">Check in and out</span>
+      </span>
+      <span class="tab-badge">0</span>
+    </button>
+
+  </nav>
+
+  <!-- Calendar -->
+  <section class="cal-card">
+    <div class="cal-head">
+      <button class="nav-btn" id="prevMonth" aria-label="Previous month">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14.5 6l-6 6 6 6"/>
+        </svg>
+      </button>
+      <div class="cal-title-wrap">
+        <div class="cal-month" id="monthLabel">—</div>
+        <div class="cal-sub" id="monthSub">—</div>
+      </div>
+      <button class="nav-btn" id="nextMonth" aria-label="Next month">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9.5 6l6 6-6 6"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="weekdays" id="weekdays" aria-hidden="true"></div>
+    <div class="grid" id="grid" role="grid" aria-label="Calendar days"></div>
+
+    <div class="legend">
+      <span class="lg"><i class="dot green"></i>Worked</span>
+      <span class="lg"><i class="dot slate"></i>Day off</span>
+      <span class="lg"><i class="dot blue"></i>Today</span>
+    </div>
+  </section>
+
+</main>
+
+<!-- ============================= OVERLAY ============================= -->
+<div class="overlay" id="overlay"></div>
+
+<!-- ============================= DAY SHEET ============================= -->
+<div class="sheet" id="daySheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="sheet-grip"></div>
+  <div class="sheet-head">
+    <div style="flex:1;min-width:0;">
+      <div class="sheet-title" id="sheetTitle">—</div>
+      <div class="sheet-sub" id="sheetSub">Choose an entry type</div>
+    </div>
+    <button class="icon-btn small" id="daySheetClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
+        <path d="M6 6l12 12M18 6L6 18"/>
+      </svg>
+    </button>
+  </div>
+
+  <button class="sheet-btn worked" type="button" data-action="worked">
+    <span class="sb-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 13l4 4L19 7"/>
+      </svg>
+    </span>
+    <span class="sb-body">
+      <span class="sb-title">Worked Shift</span>
+      <span class="sb-desc">Mark this day as a completed shift</span>
+    </span>
+  </button>
+
+  <button class="sheet-btn off" type="button" data-action="off">
+    <span class="sb-ico">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+      </svg>
+    </span>
+    <span class="sb-body">
+      <span class="sb-title">Day Off</span>
+      <span class="sb-desc">Mark this day as rest / leave</span>
+    </span>
+  </button>
+
+  <button class="sheet-btn clear" type="button" data-action="clear">
+    <span class="sb-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 7h16M9 7V5.4A1.4 1.4 0 0 1 10.4 4h3.2A1.4 1.4 0 0 1 15 5.4V7M6.5 7l.9 12.1A1.9 1.9 0 0 0 9.3 21h5.4a1.9 1.9 0 0 0 1.9-1.9L17.5 7"/>
+      </svg>
+    </span>
+    <span class="sb-body">
+      <span class="sb-title">Clear Data Entry</span>
+      <span class="sb-desc">Remove any status from this day</span>
+    </span>
+  </button>
+</div>
+
+<!-- ============================= SETTINGS SHEET ============================= -->
+<div class="sheet" id="settingsSheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <div class="sheet-grip"></div>
+  <div class="sheet-head">
+    <div style="flex:1;min-width:0;">
+      <div class="sheet-title" id="settingsTitle">Settings</div>
+      <div class="sheet-sub">Preferences are saved on this device</div>
+    </div>
+    <button class="icon-btn small" id="settingsClose" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
+        <path d="M6 6l12 12M18 6L6 18"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="set-row">
+    <span class="sb-ico" style="background:rgba(26,209,229,.13);color:#1AD1E5;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M12 3v5M12 16v5M3 12h5M16 12h5"/>
+        <circle cx="12" cy="12" r="2.6"/>
+      </svg>
+    </span>
+    <span class="sb-body">
+      <span class="sb-title">Haptic Feedback</span>
+      <span class="sb-desc">Vibrate on day taps</span>
+    </span>
+    <button class="switch" type="button" role="switch" aria-checked="true" data-toggle="haptic" aria-label="Toggle haptic feedback"></button>
+  </div>
+
+  <div class="set-row">
+    <span class="sb-ico" style="background:rgba(47,107,255,.14);color:#6AA8FF;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4.6" width="18" height="16" rx="3.4"/>
+        <path d="M3 9.6h18M8 2.6v4M16 2.6v4"/>
+      </svg>
+    </span>
+    <span class="sb-body">
+      <span class="sb-title">Week Starts Monday</span>
+      <span class="sb-desc">Off = week starts Sunday</span>
+    </span>
+    <button class="switch" type="button" role="switch" aria-checked="true" data-toggle="weekStart" aria-label="Toggle week start"></button>
+  </div>
+
+  <button class="sheet-btn clear" type="button" id="btnResetAll" style="margin-top:4px;">
+    <span class="sb-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12a9 9 0 1 0 3-6.7"/>
+        <path d="M3 4.5V10h5.5"/>
+      </svg>
+    </span>
+    <span class="sb-body">
+      <span class="sb-title">Reset all data</span>
+      <span class="sb-desc">Deletes every company log permanently</span>
+    </span>
+  </button>
+</div>
+
+<!-- ============================= DRAWER ============================= -->
+<aside class="drawer" id="drawer" aria-hidden="true" aria-label="Main menu">
+  <div class="drawer-head">
+    <div style="flex:1;min-width:0;">
+      <div class="drawer-title">ShiftMate Pro</div>
+      <div class="drawer-sub" id="drawerCompany">Acibadem</div>
+    </div>
+    <button class="icon-btn small" id="drawerClose" aria-label="Close menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
+        <path d="M6 6l12 12M18 6L6 18"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num" id="statWorked">0</div><div class="stat-lbl">Shifts</div></div>
+    <div class="stat"><div class="stat-num" id="statOff">0</div><div class="stat-lbl">Days off</div></div>
+    <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-lbl">All time</div></div>
+  </div>
+
+  <div class="drawer-actions">
+    <button class="drawer-btn" id="btnExport" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3v12M7.5 10.5L12 15l4.5-4.5M4 20h16"/>
+      </svg>
+      Export JSON Backup
+    </button>
+    <button class="drawer-btn danger" id="btnClearCompany" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 7h16M9 7V5.4A1.4 1.4 0 0 1 10.4 4h3.2A1.4 1.4 0 0 1 15 5.4V7M6.5 7l.9 12.1A1.9 1.9 0 0 0 9.3 21h5.4a1.9 1.9 0 0 0 1.9-1.9L17.5 7"/>
+      </svg>
+      <span id="clearCompanyLabel">Clear company data</span>
+    </button>
+  </div>
+
+  <div class="drawer-foot">v1.0.0 · Stored locally on this device</div>
+</aside>
+
+<!-- ============================= TOAST ============================= -->
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  /* =========================================================
+     TAB-ISOLATED DATA SCHEMA
+     ---------------------------------------------------------
+     state.data = {
+       "Acibadem": {
+         "Self Log":       { "2026-08-01": "worked", "2026-08-02": "off" },
+         "Log Attendance": { "2026-08-01": "worked" }
+       },
+       "Medipol": { ... }
+     }
+     Each tab writes into its own isolated bucket, so a day
+     marked in "Self Log" never bleeds into "Log Attendance".
+     ========================================================= */
+
+  var LS = {
+    company:   "shiftmate.pro.company",
+    tab:       "shiftmate.pro.tab",
+    data:      "shiftmate.pro.data",
+    weekStart: "shiftmate.pro.weekStart",
+    haptic:    "shiftmate.pro.haptic"
+  };
+
+  /* Worker self-tracking only — every remaining tab is modal-gated. */
+  var TABS = {
+    self:   { key: "Self Log",       sub: "Self Log Filter Active",   modal: true },
+    attend: { key: "Log Attendance", sub: "Attendance Filter Active", modal: true }
+  };
+
+  var DEFAULT_COMPANIES = ["Acibadem", "Medipol", "Memorial", "Anadolu Saglik"];
+
+  var STATUS_LABEL = {
+    worked: "Worked Shift",
+    off:    "Day Off"
+  };
+
+  var DATE_RE = /^\d{4}-\d{2}-\d{2}$/;
+
+  var ICON_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
+  var ICON_MOON  = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+  var ICON_TICK  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
+
+  /* =========================================================
+     DOM REFERENCES
+     ========================================================= */
+  var $ = function (id) { return document.getElementById(id); };
+
+  var companyInput   = $("companyInput");
+  var companySub     = $("companySub");
+  var btnCompanyMenu = $("btnCompanyMenu");
+  var companyMenu    = $("companyMenu");
+
+  var tabsEl         = $("tabs");
+  var gridEl         = $("grid");
+  var weekdaysEl     = $("weekdays");
+  var monthLabel     = $("monthLabel");
+  var monthSub       = $("monthSub");
+
+  var overlay        = $("overlay");
+  var daySheet       = $("daySheet");
+  var sheetTitle     = $("sheetTitle");
+  var sheetSub       = $("sheetSub");
+  var daySheetClose  = $("daySheetClose");
+  var settingsSheet  = $("settingsSheet");
+  var settingsClose  = $("settingsClose");
+  var drawer         = $("drawer");
+  var drawerClose    = $("drawerClose");
+
+  var drawerCompany  = $("drawerCompany");
+  var statWorked     = $("statWorked");
+  var statOff        = $("statOff");
+  var statTotal      = $("statTotal");
+
+  var btnExport         = $("btnExport");
+  var btnClearCompany   = $("btnClearCompany");
+  var clearCompanyLabel = $("clearCompanyLabel");
+  var btnResetAll       = $("btnResetAll");
+
+  var toastEl        = $("toast");
+
+  /* =========================================================
+     STATE
+     ========================================================= */
+  var now = new Date();
+
+  var state = {
+    company:   "Acibadem",
+    tab:       "self",
+    data:      {},                       // tab-isolated nested schema (see top comment)
+    weekStart: 1,                        // 0 = Sunday, 1 = Monday
+    haptic:    true,
+    view:      new Date(now.getFullYear(), now.getMonth(), 1)
+  };
+
+  var activeSheetKey = null;             // date key currently inside the day sheet
+  var toastTimer = null;
+
+  /* =========================================================
+     UTILITIES
+     ========================================================= */
+  function pad(n) { return n < 10 ? "0" + n : String(n); }
+
+  function keyOf(dateObj) {
+    return dateObj.getFullYear() + "-" + pad(dateObj.getMonth() + 1) + "-" + pad(dateObj.getDate());
+  }
+
+  function escapeHtml(str) {
+    return String(str)
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#39;");
+  }
+
+  function formatLongDate(dateKey) {
+    var p = dateKey.split("-");
+    var d = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+    return d.toLocaleDateString(undefined, {
+      weekday: "long", day: "numeric", month: "long"
+    });
+  }
+
+  function formatShortDate(dateKey) {
+    var p = dateKey.split("-");
+    var d = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+    return d.toLocaleDateString(undefined, {
+      weekday: "short", day: "numeric", month: "short"
+    });
+  }
+
+  function hapticTick() {
+    if (state.haptic && typeof navigator.vibrate === "function") {
+      try { navigator.vibrate(9); } catch (e) { /* noop */ }
+    }
+  }
+
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    if (toastTimer) { clearTimeout(toastTimer); }
+    toastTimer = setTimeout(function () {
+      toastEl.classList.remove("show");
+    }, 1900);
+  }
+
+  /* =========================================================
+     TAB-ISOLATED DATA ACCESSORS
+     ========================================================= */
+  function activeTabKey() {
+    return TABS[state.tab].key;
+  }
+
+  /** Returns the log bucket for the ACTIVE company + ACTIVE tab only. */
+  function entries() {
+    var companyBucket = state.data[state.company];
+    if (!companyBucket || typeof companyBucket !== "object") { return {}; }
+    var tabBucket = companyBucket[activeTabKey()];
+    if (!tabBucket || typeof tabBucket !== "object") { return {}; }
+    return tabBucket;
+  }
+
+  /** Writes a status into the ACTIVE company + ACTIVE tab bucket only. */
+  function setStatus(dateKey, status) {
+    var cName = state.company;
+    var tKey  = activeTabKey();
+
+    if (!state.data[cName]) { state.data[cName] = {}; }
+    if (!state.data[cName][tKey]) { state.data[cName][tKey] = {}; }
+
+    if (status) {
+      state.data[cName][tKey][dateKey] = status;
+    } else {
+      delete state.data[cName][tKey][dateKey];
+    }
+
+    /* Prune empty containers to keep the JSON tidy */
+    if (Object.keys(state.data[cName][tKey]).length === 0) {
+      delete state.data[cName][tKey];
+    }
+    if (Object.keys(state.data[cName]).length === 0) {
+      delete state.data[cName];
+    }
+
+    persistData();
+  }
+
+  /* =========================================================
+     PERSISTENCE
+     ========================================================= */
+  /** Detects legacy flat schema and migrates it into the nested form. */
+  function migrateLegacyData(raw) {
+    var result = {};
+    var migrated = false;
+
+    Object.keys(raw).forEach(function (company) {
+      var bucket = raw[company];
+      if (!bucket || typeof bucket !== "object" || Array.isArray(bucket)) { return; }
+
+      var keys = Object.keys(bucket);
+      var hasDateKeys = false;
+      var hasTabKeys = false;
+
+      keys.forEach(function (k) {
+        if (DATE_RE.test(k)) { hasDateKeys = true; }
+        else { hasTabKeys = true; }
+      });
+
+      if (hasDateKeys && !hasTabKeys) {
+        /* Legacy flat format: { company: { "YYYY-MM-DD": "status" } }
+           Migrate into the "Self Log" tab bucket so nothing is lost. */
+        result[company] = { "Self Log": bucket };
+        migrated = true;
+      } else if (hasTabKeys) {
+        /* Already nested — keep as-is */
+        result[company] = bucket;
+      }
+    });
+
+    return { data: result, migrated: migrated };
+  }
+
+  function loadState() {
+    try {
+      var c = localStorage.getItem(LS.company);
+      if (c) { state.company = c; }
+
+      var t = localStorage.getItem(LS.tab);
+      if (t && TABS[t]) { state.tab = t; }
+
+      var raw = localStorage.getItem(LS.data);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+          var mig = migrateLegacyData(parsed);
+          state.data = mig.data;
+          if (mig.migrated) {
+            try { localStorage.setItem(LS.data, JSON.stringify(state.data)); } catch (e) {}
+          }
+        }
+      }
+
+      var ws = localStorage.getItem(LS.weekStart);
+      if (ws !== null) { state.weekStart = Number(ws) === 0 ? 0 : 1; }
+
+      var h = localStorage.getItem(LS.haptic);
+      if (h !== null) { state.haptic = h === "1"; }
+    } catch (e) {
+      state.data = {};
+    }
+  }
+
+  function persistData() {
+    try { localStorage.setItem(LS.data, JSON.stringify(state.data)); } catch (e) { /* noop */ }
+  }
+
+  function persistCompany() {
+    try { localStorage.setItem(LS.company, state.company); } catch (e) { /* noop */ }
+  }
+
+  function persistTab() {
+    try { localStorage.setItem(LS.tab, state.tab); } catch (e) { /* noop */ }
+  }
+
+  /* =========================================================
+     RENDER — COMPANY
+     ========================================================= */
+  function buildCompanyMenu() {
+    var names = DEFAULT_COMPANIES.slice();
+    Object.keys(state.data).forEach(function (n) {
+      if (names.indexOf(n) === -1) { names.push(n); }
+    });
+    if (names.indexOf(state.company) === -1) { names.unshift(state.company); }
+
+    var html = "";
+    names.forEach(function (n) {
+      var current = (n === state.company);
+      html += '<button class="cm-item' + (current ? " is-current" : "") + '" type="button" role="menuitem" data-name="' + escapeHtml(n) + '">' +
+                '<span class="cm-name">' + escapeHtml(n) + "</span>" +
+                (current ? ICON_TICK : "") +
+              "</button>";
+    });
+    html += '<button class="cm-item add" type="button" role="menuitem" data-name="__new__">' +
+              '<span class="cm-name">+ New company…</span>' +
+            "</button>";
+
+    companyMenu.innerHTML = html;
+  }
+
+  function renderCompany() {
+    if (document.activeElement !== companyInput) {
+      companyInput.value = state.company;
+    }
+    buildCompanyMenu();
+  }
+
+  /* =========================================================
+     RENDER — TABS  (per-tab month entry badges)
+     ========================================================= */
+  function countMonthForTab(tabKey) {
+    var c = state.data[state.company];
+    if (!c) { return 0; }
+    var bucket = c[tabKey];
+    if (!bucket || typeof bucket !== "object") { return 0; }
+
+    var y = state.view.getFullYear();
+    var m = state.view.getMonth();
+    var count = 0;
+
+    Object.keys(bucket).forEach(function (k) {
+      var parts = k.split("-");
+      if (Number(parts[0]) === y && Number(parts[1]) === m + 1) { count++; }
+    });
+    return count;
+  }
+
+  function renderTabs() {
+    var nodes = tabsEl.querySelectorAll(".tab");
+    Array.prototype.forEach.call(nodes, function (el) {
+      var id = el.getAttribute("data-tab");
+      var tabDef = TABS[id];
+      var isActive = (id === state.tab);
+
+      el.classList.toggle("is-active", isActive);
+      el.setAttribute("aria-selected", isActive ? "true" : "false");
+
+      var badgeEl = el.querySelector(".tab-badge");
+      if (badgeEl && tabDef) {
+        badgeEl.textContent = String(countMonthForTab(tabDef.key));
+      }
+    });
+
+    companySub.textContent = TABS[state.tab].sub;
+  }
+
+  /* =========================================================
+     RENDER — CALENDAR
+     ========================================================= */
+  function monthEntryCounts() {
+    /* Scoped to the ACTIVE tab only */
+    var e = entries();
+    var y = state.view.getFullYear();
+    var m = state.view.getMonth();
+    var worked = 0, off = 0;
+
+    Object.keys(e).forEach(function (k) {
+      var parts = k.split("-");
+      if (Number(parts[0]) === y && Number(parts[1]) === m + 1) {
+        if (e[k] === "worked") { worked++; } else if (e[k] === "off") { off++; }
+      }
+    });
+    return { worked: worked, off: off, total: worked + off };
+  }
+
+  function renderWeekdays() {
+    var labels = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    var html = "";
+    for (var i = 0; i < 7; i++) {
+      var idx = (state.weekStart + i) % 7;
+      html += "<span>" + labels[idx].slice(0, 2) + "</span>";
+    }
+    weekdaysEl.innerHTML = html;
+  }
+
+  function renderCalendar() {
+    var y = state.view.getFullYear();
+    var m = state.view.getMonth();
+
+    var first = new Date(y, m, 1);
+    var daysInMonth = new Date(y, m + 1, 0).getDate();
+    var offset = (first.getDay() - state.weekStart + 7) % 7;
+    var rows = Math.ceil((offset + daysInMonth) / 7);
+    var total = rows * 7;
+
+    monthLabel.textContent = first.toLocaleDateString(undefined, { month: "long", year: "numeric" });
+
+    var counts = monthEntryCounts();
+    if (counts.total === 0) {
+      monthSub.textContent = "No entries yet in " + TABS[state.tab].key;
+    } else {
+      monthSub.textContent =
+        counts.worked + " shift" + (counts.worked === 1 ? "" : "s") +
+        " · " + counts.off + " day" + (counts.off === 1 ? "" : "s") + " off";
+    }
+
+    renderWeekdays();
+
+    /* Hydrate strictly from the ACTIVE tab's isolated bucket */
+    var e = entries();
+    var todayKey = keyOf(new Date());
+    var frag = document.createDocumentFragment();
+
+    for (var i = 0; i < total; i++) {
+      var dayNum = i - offset + 1;
+      var cell = document.createElement("button");
+      cell.type = "button";
+
+      if (dayNum < 1 || dayNum > daysInMonth) {
+        var outDate = new Date(y, m, dayNum);
+        cell.className = "cell out";
+        cell.disabled = true;
+        cell.setAttribute("aria-hidden", "true");
+        cell.innerHTML = '<span class="d">' + outDate.getDate() + "</span>";
+        frag.appendChild(cell);
+        continue;
+      }
+
+      var key = y + "-" + pad(m + 1) + "-" + pad(dayNum);
+      var status = e[key];
+
+      var cls = "cell";
+      if (status === "worked") { cls += " worked"; }
+      else if (status === "off") { cls += " off"; }
+      if (key === todayKey) { cls += " today"; }
+
+      cell.className = cls;
+      cell.setAttribute("data-key", key);
+      cell.setAttribute(
+        "aria-label",
+        formatLongDate(key) + " · " + TABS[state.tab].key + " — " + (status ? STATUS_LABEL[status] : "No entry")
+      );
+
+      var inner = '<span class="d">' + dayNum + "</span>";
+      if (status === "worked") {
+        inner += '<span class="s">' + ICON_CHECK + "</span>";
+      } else if (status === "off") {
+        inner += '<span class="s">' + ICON_MOON + "</span>";
+      }
+      cell.innerHTML = inner;
+
+      frag.appendChild(cell);
+    }
+
+    /* Full flush + re-hydration so tab switches never leave stale cells */
+    gridEl.innerHTML = "";
+    gridEl.appendChild(frag);
+  }
+
+  /* =========================================================
+     RENDER — DRAWER STATS  (scoped to active tab)
+     ========================================================= */
+  function renderDrawerStats() {
+    var e = entries();
+    var y = state.view.getFullYear();
+    var m = state.view.getMonth();
+    var w = 0, o = 0, total = 0;
+
+    Object.keys(e).forEach(function (k) {
+      total++;
+      var parts = k.split("-");
+      if (Number(parts[0]) === y && Number(parts[1]) === m + 1) {
+        if (e[k] === "worked") { w++; } else { o++; }
+      }
+    });
+
+    statWorked.textContent = String(w);
+    statOff.textContent = String(o);
+    statTotal.textContent = String(total);
+    drawerCompany.textContent = state.company + " · " + TABS[state.tab].key;
+  }
+
+  /* =========================================================
+     MASTER RENDER
+     ========================================================= */
+  function renderAll() {
+    renderCompany();
+    renderTabs();
+    renderCalendar();
+    renderDrawerStats();
+  }
+
+  /* =========================================================
+     LAYER (OVERLAY / SHEET / DRAWER) CONTROL
+     ========================================================= */
+  function openLayer(el) {
+    overlay.classList.add("open");
+    el.classList.add("open");
+    document.body.classList.add("locked");
+    if (el === drawer) { el.setAttribute("aria-hidden", "false"); }
+  }
+
+  function closeLayers() {
+    overlay.classList.remove("open");
+    document.body.classList.remove("locked");
+
+    var openEls = document.querySelectorAll(".sheet.open, .drawer.open");
+    Array.prototype.forEach.call(openEls, function (n) {
+      n.classList.remove("open");
+      if (n === drawer) { n.setAttribute("aria-hidden", "true"); }
+    });
+
+    activeSheetKey = null;
+    closeCompanyMenu();
+  }
+
+  function closeCompanyMenu() {
+    companyMenu.classList.remove("open");
+    btnCompanyMenu.classList.remove("open");
+    btnCompanyMenu.setAttribute("aria-expanded", "false");
+  }
+
+  /* =========================================================
+     DAY SHEET
+     ========================================================= */
+  function openDaySheet(dateKey) {
+    activeSheetKey = dateKey;
+    var current = entries()[dateKey];
+
+    sheetTitle.textContent = formatLongDate(dateKey);
+    sheetSub.textContent = (current ? "Currently: " + STATUS_LABEL[current] : "No entry yet")
+      + " · " + TABS[state.tab].key;
+
+    openLayer(daySheet);
+  }
+
+  /* =========================================================
+     DAY CLICK DISPATCHER  (worker self-tracking only)
+     Both remaining tabs ("Self Log" & "Log Attendance") are modal-gated.
+     ========================================================= */
+  function handleDayClick(dateKey) {
+    openDaySheet(dateKey);
+  }
+
+  /* =========================================================
+     APPLY SHEET ACTION  — writes strictly into the active tab bucket
+     ========================================================= */
+  function applySheetAction(action) {
+    if (!activeSheetKey) { return; }
+    var key = activeSheetKey;
+
+    if (action === "worked") {
+      setStatus(key, "worked");
+      toast("Shift logged · " + formatShortDate(key));
+    } else if (action === "off") {
+      setStatus(key, "off");
+      toast("Day off marked · " + formatShortDate(key));
+    } else if (action === "clear") {
+      setStatus(key, "");
+      toast("Entry cleared · " + formatShortDate(key));
+    }
+
+    renderAll();
+    closeLayers();
+  }
+
+  /* =========================================================
+     SETTINGS — SWITCH SYNC
+     ========================================================= */
+  function syncSwitches() {
+    var hapticSwitch = settingsSheet.querySelector('[data-toggle="haptic"]');
+    var weekSwitch = settingsSheet.querySelector('[data-toggle="weekStart"]');
+    if (hapticSwitch) { hapticSwitch.setAttribute("aria-checked", state.haptic ? "true" : "false"); }
+    if (weekSwitch) { weekSwitch.setAttribute("aria-checked", state.weekStart === 1 ? "true" : "false"); }
+  }
+
+  /* =========================================================
+     EVENT WIRING
+     ========================================================= */
+
+  /* ---- Company input ---- */
+  companyInput.addEventListener("keydown", function (ev) {
+    if (ev.key === "Enter") {
+      ev.preventDefault();
+      companyInput.blur();
+    }
+  });
+
+  companyInput.addEventListener("blur", function () {
+    var v = companyInput.value.trim();
+    if (!v) {
+      companyInput.value = state.company;
+      return;
+    }
+    if (v === state.company) {
+      companyInput.value = v;
+      return;
+    }
+    state.company = v;
+    persistCompany();
+    renderAll();
+    toast("Switched to " + v);
+  });
+
+  /* ---- Company menu toggle ---- */
+  btnCompanyMenu.addEventListener("click", function (ev) {
+    ev.stopPropagation();
+    var isOpen = companyMenu.classList.contains("open");
+    if (isOpen) {
+      closeCompanyMenu();
+    } else {
+      buildCompanyMenu();
+      companyMenu.classList.add("open");
+      btnCompanyMenu.classList.add("open");
+      btnCompanyMenu.setAttribute("aria-expanded", "true");
+    }
+  });
+
+  companyMenu.addEventListener("click", function (ev) {
+    var item = ev.target.closest(".cm-item");
+    if (!item) { return; }
+    var name = item.getAttribute("data-name");
+
+    if (name === "__new__") {
+      closeCompanyMenu();
+      companyInput.focus();
+      companyInput.select();
+      return;
+    }
+
+    if (name !== state.company) {
+      state.company = name;
+      persistCompany();
+      companyInput.value = name;
+      renderAll();
+      toast("Switched to " + name);
+    }
+    closeCompanyMenu();
+  });
+
+  document.addEventListener("click", function (ev) {
+    if (!companyMenu.classList.contains("open")) { return; }
+    if (ev.target.closest(".company-card")) { return; }
+    closeCompanyMenu();
+  });
+
+  /* ---- Tabs: switch fully flushes + re-hydrates the calendar ---- */
+  tabsEl.addEventListener("click", function (ev) {
+    var tab = ev.target.closest(".tab");
+    if (!tab) { return; }
+    var id = tab.getAttribute("data-tab");
+    if (!TABS[id] || id === state.tab) { return; }
+
+    state.tab = id;
+    persistTab();
+    hapticTick();
+
+    /* Close any lingering day sheet so it can't write into the wrong tab */
+    if (daySheet.classList.contains("open")) { closeLayers(); }
+
+    /* renderAll() → renderCalendar() wipes the grid and rebuilds each
+       cell purely from the newly-selected tab's isolated bucket. */
+    renderAll();
+  });
+
+  /* ---- Month navigation ---- */
+  $("prevMonth").addEventListener("click", function () {
+    state.view = new Date(state.view.getFullYear(), state.view.getMonth() - 1, 1);
+    hapticTick();
+    renderAll();
+  });
+
+  $("nextMonth").addEventListener("click", function () {
+    state.view = new Date(state.view.getFullYear(), state.view.getMonth() + 1, 1);
+    hapticTick();
+    renderAll();
+  });
+
+  /* ---- Calendar grid ---- */
+  gridEl.addEventListener("click", function (ev) {
+    var cell = ev.target.closest(".cell");
+    if (!cell) { return; }
+    var key = cell.getAttribute("data-key");
+    if (!key) { return; }
+    hapticTick();
+    handleDayClick(key);
+  });
+
+  /* ---- Day sheet actions ---- */
+  daySheet.addEventListener("click", function (ev) {
+    var btn = ev.target.closest(".sheet-btn[data-action]");
+    if (!btn) { return; }
+    hapticTick();
+    applySheetAction(btn.getAttribute("data-action"));
+  });
+
+  daySheetClose.addEventListener("click", closeLayers);
+
+  /* ---- Settings sheet ---- */
+  $("btnSettings").addEventListener("click", function () {
+    syncSwitches();
+    openLayer(settingsSheet);
+  });
+
+  settingsClose.addEventListener("click", closeLayers);
+
+  settingsSheet.addEventListener("click", function (ev) {
+    var sw = ev.target.closest("[data-toggle]");
+    if (sw) {
+      var key = sw.getAttribute("data-toggle");
+      hapticTick();
+
+      if (key === "haptic") {
+        state.haptic = !state.haptic;
+        try { localStorage.setItem(LS.haptic, state.haptic ? "1" : "0"); } catch (e) {}
+        toast(state.haptic ? "Haptics enabled" : "Haptics disabled");
+      } else if (key === "weekStart") {
+        state.weekStart = state.weekStart === 1 ? 0 : 1;
+        try { localStorage.setItem(LS.weekStart, String(state.weekStart)); } catch (e) {}
+        toast(state.weekStart === 1 ? "Week starts Monday" : "Week starts Sunday");
+      }
+
+      syncSwitches();
+      renderAll();
+    }
+  });
+
+  /* ---- Reset all data (double-tap confirm, no browser dialogs) ---- */
+  var resetArmed = false;
+  var resetTimer = null;
+  var resetTitleEl = btnResetAll.querySelector(".sb-title");
+
+  btnResetAll.addEventListener("click", function () {
+    if (!resetArmed) {
+      resetArmed = true;
+      btnResetAll.classList.add("danger-armed");
+      resetTitleEl.textContent = "Tap again to confirm";
+      resetTimer = setTimeout(function () {
+        resetArmed = false;
+        btnResetAll.classList.remove("danger-armed");
+        resetTitleEl.textContent = "Reset all data";
+      }, 3200);
+      return;
+    }
+
+    clearTimeout(resetTimer);
+    resetArmed = false;
+    btnResetAll.classList.remove("danger-armed");
+    resetTitleEl.textContent = "Reset all data";
+
+    state.data = {};
+    try { localStorage.removeItem(LS.data); } catch (e) {}
+
+    renderAll();
+    closeLayers();
+    toast("All data has been reset");
+  });
+
+  /* ---- Drawer ---- */
+  $("btnMenu").addEventListener("click", function () {
+    renderDrawerStats();
+    openLayer(drawer);
+  });
+
+  drawerClose.addEventListener("click", closeLayers);
+
+  btnExport.addEventListener("click", function () {
+    try {
+      var payload = JSON.stringify(state.data, null, 2);
+      var blob = new Blob([payload], { type: "application/json" });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "shiftmate-pro-backup.json";
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function () { URL.revokeObjectURL(url); }, 1500);
+      toast("Backup exported");
+    } catch (e) {
+      toast("Export unavailable on this device");
+    }
+  });
+
+  var clearArmed = false;
+  var clearTimer = null;
+
+  btnClearCompany.addEventListener("click", function () {
+    if (!clearArmed) {
+      clearArmed = true;
+      btnClearCompany.classList.add("armed");
+      clearCompanyLabel.textContent = "Tap again to confirm";
+      clearTimer = setTimeout(function () {
+        clearArmed = false;
+        btnClearCompany.classList.remove("armed");
+        clearCompanyLabel.textContent = "Clear company data";
+      }, 3200);
+      return;
+    }
+
+    clearTimeout(clearTimer);
+    clearArmed = false;
+    btnClearCompany.classList.remove("armed");
+    clearCompanyLabel.textContent = "Clear company data";
+
+    var target = state.company;
+    delete state.data[target];
+    persistData();
+
+    renderAll();
+    closeLayers();
+    toast("Cleared data for " + target);
+  });
+
+  /* ---- Overlay / escape ---- */
+  overlay.addEventListener("click", closeLayers);
+
+  document.addEventListener("keydown", function (ev) {
+    if (ev.key === "Escape") {
+      closeLayers();
+      closeCompanyMenu();
+    }
+  });
+
+  /* =========================================================
+     BOOT
+     ========================================================= */
+  function boot() {
+    loadState();
+
+    if (!TABS[state.tab]) { state.tab = "self"; }
+
+    /* Ensure the visible month is always the current month on cold start */
+    state.view = new Date(now.getFullYear(), now.getMonth(), 1);
+
+    syncSwitches();
+    renderAll();
+  }
+
+  if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", boot);
+  } else {
+    boot();
+  }
+})();
+</script>
+</body>
+</html>
