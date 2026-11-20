@@ -1,0 +1,2259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover" />
+<meta name="theme-color" content="#0B132B" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+<title>ShiftMate Pro</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+html,body{margin:0;padding:0;}
+:root{
+  --bg:#0B132B;
+  --surface:#151F3D;
+  --surface-2:#1B2748;
+  --surface-3:#101A33;
+  --border:rgba(255,255,255,.075);
+  --border-strong:rgba(255,255,255,.13);
+  --text:#E9EEFA;
+  --muted:#7E8CB4;
+  --muted-2:#5B6992;
+  --cyan:#1AD1E5;
+  --cyan-deep:#0FA9BC;
+  --green:#22C55E;
+  --green-deep:#12A150;
+  --blue:#2F6BFF;
+  --blue-deep:#1E4FD8;
+  --red:#EF4444;
+  --amber:#F59E0B;
+  --ease:cubic-bezier(.22,1,.36,1);
+}
+html{-webkit-text-size-adjust:100%;}
+body{
+  background-color:#0B132B;
+  background-image:
+    radial-gradient(135% 70% at 50% -14%, #1B2C58 0%, rgba(27,44,88,.62) 28%, rgba(17,28,60,.34) 50%, rgba(11,19,43,.12) 68%, rgba(11,19,43,0) 84%),
+    linear-gradient(180deg, rgba(11,19,43,0) 0%, rgba(11,19,43,0) 58%, rgba(11,19,43,.45) 78%, rgba(11,19,43,.9) 92%, #0B132B 100%);
+  background-repeat:no-repeat;
+  background-attachment:fixed;
+  background-size:cover;
+  color:var(--text);
+  font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+  font-size:15px;
+  line-height:1.4;
+  min-height:100vh;
+  overflow-x:hidden;
+  padding-bottom:calc(40px + env(safe-area-inset-bottom));
+}
+body.locked{overflow:hidden;}
+body.splash-locked{overflow:hidden;}
+button{font-family:inherit;color:inherit;background:none;border:none;padding:0;cursor:pointer;}
+input{font-family:inherit;}
+svg{display:block;}
+
+.splash-screen{
+  position:fixed;inset:0;z-index:200;
+  background-color:#0B132B;
+  background-image:
+    radial-gradient(135% 70% at 50% -14%, #1B2C58 0%, rgba(27,44,88,.62) 28%, rgba(17,28,60,.34) 50%, rgba(11,19,43,.12) 68%, rgba(11,19,43,0) 84%),
+    linear-gradient(180deg, rgba(11,19,43,0) 0%, rgba(11,19,43,0) 58%, rgba(11,19,43,.45) 78%, rgba(11,19,43,.9) 92%, #0B132B 100%);
+  background-repeat:no-repeat;
+  background-size:cover;
+  display:flex;align-items:center;justify-content:center;
+  overflow:hidden;
+  opacity:1;
+  transition:opacity .5s ease;
+  -webkit-user-select:none;user-select:none;
+  will-change:opacity;
+}
+.splash-screen.hide{opacity:0;pointer-events:none;}
+.splash-screen::after{
+  content:"";position:absolute;inset:0;pointer-events:none;z-index:0;
+  background:radial-gradient(120% 82% at 50% 42%, rgba(0,0,0,0) 42%, rgba(0,0,0,.55) 100%);
+}
+.splash-stage{
+  position:relative;z-index:1;
+  width:min(88vw,420px);max-width:100%;
+}
+.splash-stage svg{width:100%;height:auto;display:block;overflow:visible;}
+.splash-caption{
+  position:absolute;z-index:2;
+  bottom:calc(9vh + env(safe-area-inset-bottom));
+  left:0;right:0;text-align:center;
+  animation:captionFade .9s ease-out .35s both;
+}
+.splash-brand{
+  display:block;
+  font-size:20px;font-weight:800;letter-spacing:-.4px;
+  color:#E9EEFA;
+}
+.splash-brand b{
+  background:linear-gradient(135deg,#1AD1E5,#2F6BFF);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+  font-weight:800;
+}
+.splash-tag{
+  display:block;margin-top:6px;
+  font-size:11.5px;font-weight:600;letter-spacing:.3px;
+  color:#5B6992;
+}
+@keyframes captionFade{
+  from{opacity:0;transform:translateY(10px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+@keyframes fadeIn{
+  from{opacity:0;}
+  to{opacity:1;}
+}
+@keyframes hourglassSpin{
+  from{transform:rotate(0deg);}
+  to  {transform:rotate(360deg);}
+}
+@keyframes hourglassSpinOnce{
+  from{transform:rotate(0deg);}
+  to  {transform:rotate(360deg);}
+}
+@keyframes sprintAcross{
+  from{transform:translateX(-420px);}
+  to  {transform:translateX(420px);}
+}
+@keyframes bodyBob{
+  0%,100%{transform:translateY(0);}
+  50%    {transform:translateY(-4px);}
+}
+@keyframes run-leg-front{
+  0%   {transform:rotate(-35deg);}
+  50%  {transform:rotate( 40deg);}
+  100% {transform:rotate(-35deg);}
+}
+@keyframes run-leg-back{
+  0%   {transform:rotate( 40deg);}
+  50%  {transform:rotate(-35deg);}
+  100% {transform:rotate( 40deg);}
+}
+@keyframes run-arm-front{
+  0%   {transform:rotate( 38deg);}
+  50%  {transform:rotate(-38deg);}
+  100% {transform:rotate( 38deg);}
+}
+@keyframes run-arm-suitcase{
+  0%   {transform:rotate(-38deg);}
+  50%  {transform:rotate( 38deg);}
+  100% {transform:rotate(-38deg);}
+}
+
+.hourglass-group{
+  transform-box:fill-box;
+  transform-origin:center;
+  animation:hourglassSpin 1.8s linear infinite, fadeIn .8s ease-out both;
+}
+.splash-screen.leaving .hourglass-group{
+  animation:hourglassSpin 1.8s linear 1, fadeIn .8s ease-out both;
+}
+.runner-track{
+  animation:sprintAcross 3.5s linear both;
+}
+.splash-screen.leaving .runner-track,
+.splash-screen.hide .runner-track{
+  animation:none;
+}
+.runner-bob{
+  transform-box:fill-box;
+  transform-origin:center;
+  animation:bodyBob .2s ease-in-out infinite;
+}
+.run-leg-front{
+  transform-box:fill-box;
+  transform-origin:0% 0%;
+  animation:run-leg-front .2s ease-in-out infinite;
+}
+.run-leg-back{
+  transform-box:fill-box;
+  transform-origin:100% 0%;
+  animation:run-leg-back .2s ease-in-out infinite;
+}
+.run-arm-front{
+  transform-box:fill-box;
+  transform-origin:0% 0%;
+  animation:run-arm-front .2s ease-in-out infinite;
+}
+.run-arm-suitcase{
+  transform-box:fill-box;
+  transform-origin:100% 0%;
+  animation:run-arm-suitcase .2s ease-in-out infinite;
+}
+
+.splash-screen.leaving .runner-bob,
+.splash-screen.leaving .run-leg-front,
+.splash-screen.leaving .run-leg-back,
+.splash-screen.leaving .run-arm-front,
+.splash-screen.leaving .run-arm-suitcase,
+.splash-screen.hide .runner-bob,
+.splash-screen.hide .run-leg-front,
+.splash-screen.hide .run-leg-back,
+.splash-screen.hide .run-arm-front,
+.splash-screen.hide .run-arm-suitcase{
+  animation:none;
+}
+
+@media (prefers-reduced-motion: reduce){
+  .hourglass-group{animation:fadeIn .6s ease-out both !important;}
+  .runner-track{animation:fadeIn .6s ease-out both !important;}
+  .runner-bob,
+  .run-leg-front,
+  .run-leg-back,
+  .run-arm-front,
+  .run-arm-suitcase{animation:none !important;}
+  .splash-caption{animation:fadeIn .6s ease-out both !important;}
+}
+
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:60;
+  padding-top:env(safe-area-inset-top);
+  background:rgba(11,19,43,.84);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  backdrop-filter:blur(18px) saturate(140%);
+  border-bottom:1px solid var(--border);
+}
+.topbar-inner{
+  height:60px;max-width:480px;margin:0 auto;
+  display:flex;align-items:center;gap:4px;padding:0 8px;
+}
+.icon-btn{
+  width:48px;height:48px;flex:none;
+  display:grid;place-items:center;
+  border-radius:14px;color:#C6D2EE;
+  transition:background .18s ease,transform .12s ease,color .18s ease;
+}
+.icon-btn:active{transform:scale(.9);background:rgba(255,255,255,.07);}
+.icon-btn svg{width:22px;height:22px;}
+.icon-btn.small{width:40px;height:40px;border-radius:12px;background:rgba(255,255,255,.05);}
+.icon-btn.small svg{width:18px;height:18px;}
+.brand{display:flex;align-items:center;gap:9px;flex:1;min-width:0;margin-left:2px;}
+.brand-ico{
+  width:32px;height:32px;flex:none;border-radius:10px;
+  display:grid;place-items:center;
+  background:linear-gradient(135deg,rgba(26,209,229,.18),rgba(47,107,255,.18));
+  border:1px solid rgba(26,209,229,.28);
+  color:var(--cyan);
+}
+.brand-ico svg{width:17px;height:17px;}
+.brand h1{
+  margin:0;font-size:17px;font-weight:750;letter-spacing:-.3px;white-space:nowrap;
+  overflow:hidden;text-overflow:ellipsis;
+}
+.brand h1 .pro{
+  background:linear-gradient(135deg,#1AD1E5,#2F6BFF);
+  -webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;
+  font-weight:800;
+}
+
+.app{
+  max-width:480px;margin:0 auto;
+  padding:calc(60px + env(safe-area-inset-top) + 14px) 14px 0;
+}
+
+.company-card{
+  position:relative;
+  background:linear-gradient(180deg,#18223F 0%,#131C36 100%);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:16px 16px 14px;
+  box-shadow:0 20px 44px -26px rgba(0,0,0,.95);
+}
+.company-label{
+  font-size:10.5px;font-weight:700;letter-spacing:1.3px;text-transform:uppercase;
+  color:var(--muted-2);margin-bottom:2px;
+}
+.company-row{display:flex;align-items:center;gap:10px;}
+.company-input{
+  flex:1;min-width:0;
+  font-size:23px;font-weight:750;letter-spacing:-.5px;
+  color:#FFFFFF;background:transparent;border:none;outline:none;
+  padding:4px 0;line-height:1.2;
+}
+.company-input::placeholder{color:var(--muted-2);}
+.caret-btn{
+  width:48px;height:48px;flex:none;border-radius:15px;
+  display:grid;place-items:center;
+  background:rgba(255,255,255,.055);
+  border:1px solid var(--border);
+  color:#A9B8DC;
+  transition:transform .22s var(--ease),background .18s ease,color .18s ease;
+}
+.caret-btn:active{transform:scale(.92);}
+.caret-btn.open{transform:rotate(180deg);background:rgba(26,209,229,.14);color:var(--cyan);border-color:rgba(26,209,229,.3);}
+.caret-btn svg{width:18px;height:18px;}
+.company-sub{
+  display:flex;align-items:center;gap:8px;
+  margin-top:11px;font-size:12px;font-weight:600;color:var(--muted);
+  letter-spacing:.1px;
+}
+.pulse{
+  width:7px;height:7px;border-radius:50%;flex:none;background:var(--cyan);
+  animation:pulse 2.2s infinite;
+}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(26,209,229,.55);}
+  70%{box-shadow:0 0 0 9px rgba(26,209,229,0);}
+  100%{box-shadow:0 0 0 0 rgba(26,209,229,0);}
+}
+
+.company-menu{
+  position:absolute;left:12px;right:12px;top:calc(100% + 8px);
+  background:#0F1830;
+  border:1px solid var(--border-strong);
+  border-radius:18px;padding:6px;z-index:45;
+  box-shadow:0 28px 56px -14px rgba(0,0,0,.9);
+  opacity:0;transform:translateY(-8px) scale(.97);
+  pointer-events:none;transform-origin:top center;
+  transition:opacity .18s ease,transform .2s var(--ease);
+  max-height:264px;overflow-y:auto;
+}
+.company-menu.open{opacity:1;transform:none;pointer-events:auto;}
+.cm-item{
+  width:100%;min-height:48px;
+  display:flex;align-items:center;gap:10px;
+  padding:11px 14px;border-radius:13px;
+  font-size:14.5px;font-weight:650;color:#D3DCF2;text-align:left;
+  transition:background .15s ease;
+  cursor:pointer;
+}
+.cm-item:active{background:rgba(255,255,255,.07);}
+.cm-item.is-current{background:rgba(26,209,229,.12);color:var(--cyan);}
+.cm-item .cm-name{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.cm-item svg{width:16px;height:16px;flex:none;}
+.cm-item.add{color:var(--muted);}
+.cm-item.input-row{min-height:60px;padding:8px 10px;cursor:default;}
+.cm-item.input-row .cm-input{
+  flex:1;background:rgba(255,255,255,.08);border:1px solid var(--border);
+  border-radius:10px;padding:10px 12px;font-size:13px;color:#E9EEFA;
+  outline:none;transition:background .15s ease,border-color .15s ease;
+}
+.cm-item.input-row .cm-input:focus{background:rgba(255,255,255,.12);border-color:var(--cyan);}
+.cm-item.input-row .cm-input::placeholder{color:var(--muted-2);}
+.cm-item.input-row .cm-confirm{
+  width:40px;height:40px;flex:none;border-radius:10px;
+  display:grid;place-items:center;background:rgba(26,209,229,.15);
+  color:var(--cyan);border:1px solid rgba(26,209,229,.3);
+  transition:background .15s ease,transform .12s ease;
+}
+.cm-item.input-row .cm-confirm:active{transform:scale(.9);}
+.cm-item.input-row .cm-confirm svg{width:18px;height:18px;}
+.cm-delete{
+  width:40px;height:40px;flex:none;border-radius:10px;
+  display:grid;place-items:center;background:rgba(239,68,68,.12);
+  color:#F87171;border:1px solid rgba(239,68,68,.25);
+  transition:background .15s ease,transform .12s ease;
+}
+.cm-delete:active{transform:scale(.92);}
+.cm-delete svg{width:18px;height:18px;}
+
+.tabs{margin-top:16px;display:flex;flex-direction:column;}
+.tab{
+  width:100%;min-height:62px;
+  display:flex;align-items:center;gap:12px;
+  padding:11px 14px;margin-bottom:8px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:17px;
+  color:var(--text);text-align:left;
+  transition:background .2s ease,border-color .2s ease,color .2s ease,transform .12s ease,box-shadow .25s ease;
+}
+.tab:last-child{margin-bottom:0;}
+.tab:active{transform:scale(.985);}
+.tab.is-active{
+  background:linear-gradient(135deg,#1AD1E5 0%,#12B9CE 100%);
+  border-color:#5BE7F6;
+  color:#04222B;
+  box-shadow:0 12px 28px -10px rgba(26,209,229,.6);
+}
+.tab-ico{
+  width:38px;height:38px;flex:none;border-radius:12px;
+  display:grid;place-items:center;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.05);
+  color:#9FB0D6;
+  transition:background .2s ease,color .2s ease,border-color .2s ease;
+}
+.tab-ico svg{width:19px;height:19px;}
+.tab.is-active .tab-ico{background:rgba(4,34,43,.15);border-color:rgba(4,34,43,.12);color:#04222B;}
+.tab-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;}
+.tab-title{font-size:14.5px;font-weight:720;letter-spacing:-.1px;}
+.tab-desc{font-size:11.5px;font-weight:550;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tab.is-active .tab-desc{color:rgba(4,34,43,.68);}
+.tab-badge{
+  flex:none;min-width:30px;height:26px;padding:0 9px;
+  display:grid;place-items:center;
+  font-size:11.5px;font-weight:750;letter-spacing:.2px;
+  border-radius:9px;
+  background:rgba(255,255,255,.06);
+  color:var(--muted);
+  transition:background .2s ease,color .2s ease;
+}
+.tab.is-active .tab-badge{background:rgba(4,34,43,.16);color:#04222B;}
+
+.cal-card{
+  margin-top:16px;
+  background:linear-gradient(180deg,rgba(23,33,64,.92) 0%,rgba(16,24,48,.92) 100%);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:14px 12px 14px;
+  box-shadow:0 20px 44px -28px rgba(0,0,0,.95);
+}
+.cal-head{display:flex;align-items:center;gap:10px;padding:2px 2px 12px;}
+.cal-title-wrap{flex:1;min-width:0;text-align:center;}
+.cal-month{font-size:16.5px;font-weight:750;letter-spacing:-.3px;}
+.cal-sub{font-size:11.5px;font-weight:600;color:var(--muted);margin-top:1px;}
+.nav-btn{
+  width:44px;height:44px;flex:none;border-radius:13px;
+  display:grid;place-items:center;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--border);
+  color:#B6C4E6;
+  transition:transform .14s ease,background .18s ease;
+}
+.nav-btn:active{transform:scale(.9);background:rgba(255,255,255,.1);}
+.nav-btn svg{width:18px;height:18px;}
+.weekdays{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:5px;
+  padding:0 1px 6px;
+}
+.weekdays span{
+  text-align:center;font-size:10.5px;font-weight:750;
+  letter-spacing:.7px;text-transform:uppercase;color:var(--muted-2);
+}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:5px;}
+
+.cell{
+  position:relative;
+  min-height:48px;
+  border-radius:13px;
+  border:1px solid var(--border);
+  background:rgba(255,255,255,.028);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:2px;padding:0;
+  font-size:13.5px;font-weight:700;letter-spacing:-.2px;
+  color:#C7D3EE;
+  transition:transform .12s ease,background .2s ease,border-color .2s ease,box-shadow .2s ease,color .2s ease;
+  user-select:none;-webkit-user-select:none;
+}
+.cell .d{line-height:1;}
+.cell .s{width:12px;height:12px;display:grid;place-items:center;opacity:.95;}
+.cell .s svg{width:11px;height:11px;}
+.cell:active{transform:scale(.93);}
+.cell.out{
+  color:#39466B;
+  background:rgba(255,255,255,.012);
+  border-color:rgba(255,255,255,.035);
+}
+.cell:disabled{opacity:1;cursor:default;}
+.cell.today{outline:2px solid #6AA8FF;outline-offset:-2px;}
+.cell.today:not(.worked):not(.off){
+  background:linear-gradient(180deg,#2F6BFF 0%,#1E4FD8 100%);
+  border-color:#5C93FF;
+  color:#FFFFFF;
+  box-shadow:0 8px 20px -8px rgba(47,107,255,.85);
+}
+.cell.worked{
+  background:linear-gradient(180deg,#25CE63 0%,#12A150 100%);
+  border-color:#48E184;
+  color:#03230F;
+  box-shadow:0 8px 20px -10px rgba(34,197,94,.9);
+}
+.cell.off{
+  background:linear-gradient(180deg,#3A4870 0%,#2A3557 100%);
+  border-color:#4C5D8C;
+  color:#D6E0F7;
+}
+.legend{
+  display:flex;align-items:center;justify-content:center;gap:16px;
+  padding:13px 4px 2px;margin-top:4px;
+  border-top:1px solid rgba(255,255,255,.05);
+}
+.legend .lg{
+  display:flex;align-items:center;gap:6px;
+  font-size:11px;font-weight:650;color:var(--muted);
+}
+.legend .dot{width:9px;height:9px;border-radius:3px;flex:none;}
+.dot.green{background:linear-gradient(180deg,#25CE63,#12A150);}
+.dot.slate{background:linear-gradient(180deg,#3A4870,#2A3557);}
+.dot.blue{background:linear-gradient(180deg,#2F6BFF,#1E4FD8);}
+
+.overlay{
+  position:fixed;inset:0;z-index:80;
+  background:rgba(3,7,18,.68);
+  -webkit-backdrop-filter:blur(4px);
+  backdrop-filter:blur(4px);
+  opacity:0;pointer-events:none;
+  transition:opacity .28s ease;
+}
+.overlay.open{opacity:1;pointer-events:auto;}
+
+.sheet{
+  position:fixed;left:0;right:0;bottom:0;z-index:90;
+  max-width:480px;margin:0 auto;
+  background:linear-gradient(180deg,#18223F 0%,#111A33 100%);
+  border-top:1px solid rgba(255,255,255,.1);
+  border-radius:26px 26px 0 0;
+  padding:10px 16px calc(20px + env(safe-area-inset-bottom));
+  transform:translateY(110%);
+  visibility:hidden;
+  transition:transform .36s var(--ease),visibility .36s;
+  box-shadow:0 -22px 60px -18px rgba(0,0,0,.9);
+}
+.sheet.open{transform:translateY(0);visibility:visible;}
+#settingsSheet{max-height:calc(100vh - 40px);overflow-y:auto;}
+.sheet-grip{
+  width:40px;height:4px;border-radius:99px;
+  background:rgba(255,255,255,.16);
+  margin:2px auto 14px;
+}
+.sheet-head{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:0 2px 14px;
+}
+.sheet-title{font-size:18px;font-weight:750;letter-spacing:-.35px;}
+.sheet-sub{font-size:12.5px;font-weight:600;color:var(--muted);margin-top:3px;}
+.sheet-btn{
+  width:100%;min-height:60px;
+  display:flex;align-items:center;gap:13px;
+  padding:12px 14px;margin-bottom:9px;
+  border-radius:17px;
+  background:rgba(255,255,255,.035);
+  border:1px solid var(--border);
+  text-align:left;
+  transition:transform .12s ease,background .18s ease,border-color .18s ease;
+}
+.sheet-btn:last-child{margin-bottom:0;}
+.sheet-btn:active{transform:scale(.98);}
+.sb-ico{
+  width:38px;height:38px;flex:none;border-radius:12px;
+  display:grid;place-items:center;
+}
+.sb-ico svg{width:19px;height:19px;}
+.sb-body{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px;}
+.sb-title{font-size:15px;font-weight:720;letter-spacing:-.1px;}
+.sb-desc{font-size:11.5px;font-weight:550;color:var(--muted);}
+.sheet-btn.worked{border-color:rgba(34,197,94,.28);}
+.sheet-btn.worked .sb-ico{background:rgba(34,197,94,.14);color:#2FD873;}
+.sheet-btn.off{border-color:rgba(148,163,184,.22);}
+.sheet-btn.off .sb-ico{background:rgba(148,163,184,.13);color:#A8B6D4;}
+.sheet-btn.clear{border-color:rgba(239,68,68,.26);}
+.sheet-btn.clear .sb-ico{background:rgba(239,68,68,.13);color:#F87171;}
+
+.set-row{
+  display:flex;align-items:center;gap:12px;
+  min-height:60px;padding:10px 14px;margin-bottom:9px;
+  border-radius:17px;
+  background:rgba(255,255,255,.035);
+  border:1px solid var(--border);
+}
+.set-row .sb-body{gap:2px;}
+.switch{
+  width:52px;height:31px;flex:none;border-radius:99px;
+  background:rgba(255,255,255,.12);
+  border:1px solid var(--border);
+  position:relative;
+  transition:background .22s ease,border-color .22s ease;
+}
+.switch::after{
+  content:"";position:absolute;top:3px;left:3px;
+  width:23px;height:23px;border-radius:50%;
+  background:#8E9DC2;
+  transition:transform .24s var(--ease),background .22s ease;
+}
+.switch[aria-checked="true"]{background:linear-gradient(135deg,#1AD1E5,#0FA9BC);border-color:#5BE7F6;}
+.switch[aria-checked="true"]::after{transform:translateX(21px);background:#04222B;}
+
+.lang-group{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+  margin-bottom:9px;
+}
+.lang-btn{
+  min-height:48px;
+  border-radius:14px;
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  font-size:13px;font-weight:700;color:#C6D2EE;
+  transition:transform .12s ease,background .18s ease,border-color .18s ease,color .18s ease;
+}
+.lang-btn:active{transform:scale(.97);}
+.lang-btn.is-active{
+  background:linear-gradient(135deg,#1AD1E5,#0FA9BC);
+  border-color:#5BE7F6;
+  color:#04222B;
+}
+
+.drawer{
+  position:fixed;top:0;right:0;bottom:0;z-index:95;
+  width:min(86vw,338px);
+  background:linear-gradient(180deg,#131D38 0%,#0D1630 100%);
+  border-left:1px solid var(--border-strong);
+  transform:translateX(102%);
+  visibility:hidden;
+  transition:transform .36s var(--ease),visibility .36s;
+  padding:calc(18px + env(safe-area-inset-top)) 16px calc(20px + env(safe-area-inset-bottom));
+  display:flex;flex-direction:column;
+  box-shadow:-24px 0 60px -20px rgba(0,0,0,.9);
+}
+.drawer.open{transform:translateX(0);visibility:visible;}
+.drawer-head{display:flex;align-items:flex-start;gap:12px;padding-bottom:18px;}
+.drawer-title{font-size:16.5px;font-weight:750;letter-spacing:-.3px;}
+.drawer-sub{font-size:12px;font-weight:600;color:var(--cyan);margin-top:3px;}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:18px;}
+.stat{
+  background:rgba(255,255,255,.04);
+  border:1px solid var(--border);
+  border-radius:16px;padding:13px 8px;text-align:center;
+}
+.stat-num{font-size:20px;font-weight:780;letter-spacing:-.6px;color:#FFFFFF;}
+.stat-lbl{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--muted-2);margin-top:3px;}
+.drawer-actions{display:flex;flex-direction:column;gap:9px;}
+.drawer-btn{
+  width:100%;min-height:52px;
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  border-radius:16px;
+  background:rgba(255,255,255,.05);
+  border:1px solid var(--border);
+  font-size:14px;font-weight:700;color:#D3DCF2;
+  transition:transform .12s ease,background .18s ease,border-color .18s ease;
+}
+.drawer-btn:active{transform:scale(.98);background:rgba(255,255,255,.09);}
+.drawer-btn svg{width:17px;height:17px;}
+.drawer-btn.danger{color:#F87171;border-color:rgba(239,68,68,.26);}
+.drawer-foot{
+  margin-top:auto;padding-top:18px;text-align:center;
+  font-size:11px;font-weight:600;color:var(--muted-2);letter-spacing:.2px;
+}
+
+.modal-overlay{
+  position:fixed;inset:0;z-index:100;
+  background:rgba(3,7,18,.74);
+  -webkit-backdrop-filter:blur(7px) saturate(130%);
+  backdrop-filter:blur(7px) saturate(130%);
+  opacity:0;pointer-events:none;
+  transition:opacity .24s ease;
+}
+.modal-overlay.open{opacity:1;pointer-events:auto;}
+
+.confirm-modal{
+  position:fixed;left:50%;top:50%;z-index:101;
+  width:min(92vw,392px);
+  max-height:calc(100vh - 40px);
+  overflow-y:auto;
+  padding:22px 20px 18px;
+  border-radius:24px;
+  background:linear-gradient(180deg,#1A2545 0%,#121B36 100%);
+  border:1px solid var(--border-strong);
+  box-shadow:0 30px 74px -20px rgba(0,0,0,.96);
+  text-align:center;
+  opacity:0;visibility:hidden;pointer-events:none;
+  transform:translate(-50%,-50%) scale(.9);
+  transition:opacity .22s ease,transform .3s var(--ease),visibility .3s;
+}
+.confirm-modal.open{
+  opacity:1;visibility:visible;pointer-events:auto;
+  transform:translate(-50%,-50%) scale(1);
+}
+.confirm-ico{
+  width:58px;height:58px;margin:0 auto 15px;
+  border-radius:19px;
+  display:grid;place-items:center;
+}
+.confirm-ico svg{width:27px;height:27px;}
+.confirm-ico.danger{
+  background:rgba(239,68,68,.14);
+  border:1px solid rgba(239,68,68,.32);
+  color:#F87171;
+  box-shadow:0 12px 30px -14px rgba(239,68,68,.85);
+}
+.confirm-ico.warn{
+  background:rgba(245,158,11,.14);
+  border:1px solid rgba(245,158,11,.32);
+  color:#FBBF24;
+  box-shadow:0 12px 30px -14px rgba(245,158,11,.8);
+}
+.confirm-ico.info{
+  background:rgba(26,209,229,.14);
+  border:1px solid rgba(26,209,229,.32);
+  color:var(--cyan);
+  box-shadow:0 12px 30px -14px rgba(26,209,229,.8);
+}
+.confirm-title{
+  font-size:18.5px;font-weight:760;letter-spacing:-.4px;color:#FFFFFF;
+  padding:0 4px;
+}
+.confirm-msg{
+  margin-top:8px;
+  font-size:13.5px;font-weight:550;line-height:1.5;
+  color:var(--muted);
+  padding:0 6px;
+}
+.confirm-entity{
+  display:inline-flex;align-items:center;gap:8px;
+  max-width:100%;
+  margin-top:14px;padding:9px 15px;
+  border-radius:13px;
+  background:rgba(255,255,255,.055);
+  border:1px solid var(--border-strong);
+  font-size:13.5px;font-weight:720;letter-spacing:-.2px;
+  color:#FFFFFF;
+  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
+}
+.confirm-entity[hidden]{display:none;}
+.confirm-entity .ce-dot{
+  width:7px;height:7px;border-radius:50%;flex:none;
+  background:currentColor;opacity:.75;
+}
+.confirm-note{
+  margin-top:14px;
+  font-size:11px;font-weight:650;letter-spacing:.2px;
+  color:var(--muted-2);
+}
+.confirm-actions{
+  display:flex;gap:10px;margin-top:20px;
+}
+.confirm-btn{
+  flex:1;min-height:54px;
+  display:grid;place-items:center;
+  border-radius:16px;
+  font-size:14.5px;font-weight:730;letter-spacing:-.1px;
+  transition:transform .12s ease,background .18s ease,border-color .18s ease,box-shadow .2s ease;
+}
+.confirm-btn:active{transform:scale(.97);}
+.confirm-btn.ghost{
+  background:rgba(255,255,255,.06);
+  border:1px solid var(--border);
+  color:#C6D2EE;
+}
+.confirm-btn.ghost:active{background:rgba(255,255,255,.11);}
+.confirm-btn.danger{
+  background:linear-gradient(180deg,#F05252 0%,#C62F2F 100%);
+  border:1px solid #F87171;
+  color:#FFFFFF;
+  box-shadow:0 14px 30px -13px rgba(239,68,68,.95);
+}
+.confirm-btn.warn{
+  background:linear-gradient(180deg,#FBBF24 0%,#D97706 100%);
+  border:1px solid #FCD34D;
+  color:#2A1A02;
+  box-shadow:0 14px 30px -13px rgba(245,158,11,.9);
+}
+
+.toast{
+  position:fixed;left:50%;
+  top:calc(72px + env(safe-area-inset-top));
+  z-index:120;
+  transform:translate(-50%,-24px);
+  max-width:calc(100vw - 40px);
+  padding:13px 20px;
+  border-radius:15px;
+  background:rgba(27,39,72,.97);
+  border:1px solid rgba(255,255,255,.13);
+  color:#E9EEFA;
+  font-size:13.5px;font-weight:650;letter-spacing:-.1px;
+  text-align:center;
+  box-shadow:0 18px 40px -12px rgba(0,0,0,.85);
+  opacity:0;pointer-events:none;
+  transition:opacity .26s ease,transform .3s var(--ease);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.toast.show{opacity:1;transform:translate(-50%,0);}
+
+@media (max-width:340px){
+  .company-input{font-size:20px;}
+  .tab-desc{display:none;}
+  .cell{font-size:12.5px;min-height:46px;}
+  .confirm-btn{font-size:13.5px;min-height:50px;}
+  .splash-brand{font-size:18px;}
+}
+</style>
+</head>
+<body>
+
+<div class="splash-screen" id="splashScreen" role="presentation" aria-hidden="true">
+  <div class="splash-stage">
+    <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+      <defs>
+        <radialGradient id="splashAura" cx="50%" cy="36%" r="60%">
+          <stop offset="0%" stop-color="#1B2C58" stop-opacity="0.9"/>
+          <stop offset="55%" stop-color="#14224A" stop-opacity="0.4"/>
+          <stop offset="100%" stop-color="#0B132B" stop-opacity="0"/>
+        </radialGradient>
+        <radialGradient id="groundGlow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#1AD1E5" stop-opacity="0.28"/>
+          <stop offset="42%" stop-color="#1AD1E5" stop-opacity="0.11"/>
+          <stop offset="72%" stop-color="#1AD1E5" stop-opacity="0.035"/>
+          <stop offset="100%" stop-color="#1AD1E5" stop-opacity="0"/>
+        </radialGradient>
+        <linearGradient id="groundFade" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#0B132B" stop-opacity="0"/>
+          <stop offset="45%" stop-color="#0B132B" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="#0B132B" stop-opacity="1"/>
+        </linearGradient>
+      </defs>
+
+      <circle cx="200" cy="120" r="180" fill="url(#splashAura)"/>
+
+      <ellipse cx="200" cy="254" rx="176" ry="34" fill="url(#groundGlow)"/>
+
+      <g transform="translate(200, 92)">
+        <g class="hourglass-group">
+          <rect x="-40" y="-59" width="80" height="8" rx="4" fill="#2F6BFF"/>
+          <rect x="-40" y="51"  width="80" height="8" rx="4" fill="#2F6BFF"/>
+          <rect x="-40" y="-59" width="80" height="3" rx="1.5" fill="#5C93FF" opacity="0.7"/>
+          <rect x="-40" y="51"  width="80" height="3" rx="1.5" fill="#5C93FF" opacity="0.4"/>
+
+          <path d="M -30 -51 L 30 -51 L 6 -4 L -6 -4 Z"
+                fill="rgba(26,209,229,0.09)" stroke="#1AD1E5"
+                stroke-width="2.5" stroke-linejoin="round"/>
+          <path d="M -30 51 L 30 51 L 6 4 L -6 4 Z"
+                fill="rgba(26,209,229,0.09)" stroke="#1AD1E5"
+                stroke-width="2.5" stroke-linejoin="round"/>
+
+          <path d="M -22 -47 L 22 -47 L 4 -14 L -4 -14 Z"
+                fill="#1AD1E5" opacity="0.85"/>
+          <path d="M -16 51 L 16 51 L 2 30 L -2 30 Z"
+                fill="#1AD1E5" opacity="0.5"/>
+
+          <line x1="0" y1="-4" x2="0" y2="28"
+                stroke="#1AD1E5" stroke-width="2.4" stroke-linecap="round" opacity="0.9"/>
+          <circle cx="0" cy="0" r="2.6" fill="#1AD1E5"/>
+        </g>
+      </g>
+
+      <g transform="translate(200, 222)">
+        <g class="runner-track">
+          <g class="runner-bob">
+
+            <g opacity="0.5">
+              <line x1="-26" y1="-20" x2="-50" y2="-20" stroke="#1AD1E5" stroke-width="1.7" stroke-linecap="round"/>
+              <line x1="-24" y1="-12" x2="-54" y2="-12" stroke="#1AD1E5" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="-22" y1="-4"  x2="-46" y2="-4"  stroke="#1AD1E5" stroke-width="1.5" stroke-linecap="round"/>
+              <line x1="-20" y1="4"   x2="-42" y2="4"   stroke="#1AD1E5" stroke-width="1.4" stroke-linecap="round"/>
+            </g>
+
+            <path class="run-leg-back"
+                  d="M 0,0 L -6,15 L -13,29"
+                  fill="none" stroke="#C6D2EE" stroke-width="5.2"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+
+            <g class="run-arm-suitcase">
+              <path d="M 0,-22 L -8,-13 L -14,-4"
+                    fill="none" stroke="#C6D2EE" stroke-width="4.4"
+                    stroke-linecap="round" stroke-linejoin="round"/>
+              <g transform="translate(-14, -4)">
+                <path d="M -4,-2 Q 0,-8 4,-2"
+                      fill="none" stroke="#0FA9BC" stroke-width="1.8" stroke-linecap="round"/>
+                <rect x="-9" y="0" width="18" height="12" rx="3" fill="#1AD1E5"/>
+                <rect x="-9" y="0" width="18" height="4" rx="3" fill="#5BE7F6" opacity="0.45"/>
+                <line x1="-7" y1="5" x2="7" y2="5"
+                      stroke="#0B132B" stroke-width="1.05" opacity="0.55" stroke-linecap="round"/>
+                <circle cx="0" cy="8" r="1.1" fill="#0B132B" opacity="0.4"/>
+              </g>
+            </g>
+
+            <line x1="0" y1="0" x2="4" y2="-24"
+                  stroke="#C6D2EE" stroke-width="6.2" stroke-linecap="round"/>
+
+            <path class="run-leg-front"
+                  d="M 0,0 L 6,15 L 13,29"
+                  fill="none" stroke="#C6D2EE" stroke-width="5.2"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+
+            <path class="run-arm-front"
+                  d="M 0,-22 L 8,-13 L 14,-4"
+                  fill="none" stroke="#C6D2EE" stroke-width="4.4"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+
+            <circle cx="6" cy="-31" r="6.2" fill="#C6D2EE"/>
+
+          </g>
+        </g>
+      </g>
+
+      <rect x="-40" y="258" width="480" height="72" fill="url(#groundFade)"/>
+    </svg>
+  </div>
+
+  <div class="splash-caption">
+    <span class="splash-brand">ShiftMate <b>Pro</b></span>
+    <span class="splash-tag" data-i18n="splashTag">Preparing your calendar…</span>
+  </div>
+</div>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <button class="icon-btn" id="btnSettings" data-i18n-aria="openSettings" aria-label="Open settings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="3.1"/>
+        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82.33h.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v.06a2 2 0 1 1 4 0"/>
+      </svg>
+    </button>
+
+    <div class="brand">
+      <span class="brand-ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4.6" width="18" height="16" rx="3.4"/>
+          <path d="M3 9.6h18M8 2.6v4M16 2.6v4"/>
+        </svg>
+      </span>
+      <h1>ShiftMate <span class="pro">Pro</span></h1>
+    </div>
+
+    <button class="icon-btn" id="btnMenu" data-i18n-aria="openMenu" aria-label="Open menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round">
+        <path d="M4 7h16M4 12h12M4 17h16"/>
+      </svg>
+    </button>
+  </div>
+</header>
+
+<main class="app">
+
+  <section class="company-card">
+    <div class="company-row">
+      <div style="flex:1;min-width:0;">
+        <div class="company-label" data-i18n="activeCompany">Active Company</div>
+        <input id="companyInput" class="company-input" type="text" value="Acibadem"
+               autocomplete="off" autocorrect="off" spellcheck="false" aria-label="Active company" readonly />
+      </div>
+      <button class="caret-btn" id="btnCompanyMenu" aria-label="Choose company" aria-haspopup="true" aria-expanded="false">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 9.5l6 6 6-6"/>
+        </svg>
+      </button>
+    </div>
+    <div class="company-sub">
+      <span class="pulse" aria-hidden="true"></span>
+      <span id="companySub">Self Log Filter Active</span>
+    </div>
+
+    <div class="company-menu" id="companyMenu" role="menu"></div>
+  </section>
+
+  <nav class="tabs" id="tabs" role="tablist" aria-label="Tracking modes">
+
+    <button class="tab is-active" data-tab="self" type="button" role="tab" aria-selected="true">
+      <span class="tab-ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="3.6"/>
+          <path d="M4.8 20c.6-3.4 3.6-5.4 7.2-5.4s6.6 2 7.2 5.4"/>
+        </svg>
+      </span>
+      <span class="tab-body">
+        <span class="tab-title" data-i18n="selfLog">Self Log</span>
+        <span class="tab-desc" data-i18n="logYourOwnShifts">Log your own shifts</span>
+      </span>
+      <span class="tab-badge" data-badge="self">0</span>
+    </button>
+
+    <button class="tab" data-tab="plan" type="button" role="tab" aria-selected="false">
+      <span class="tab-ico" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3.4" y="3.4" width="17.2" height="17.2" rx="4.2"/>
+          <path d="M8 12.4l2.6 2.6L16.2 9.4"/>
+        </svg>
+      </span>
+      <span class="tab-body">
+        <span class="tab-title" data-i18n="planAhead">Plan Ahead</span>
+        <span class="tab-desc" data-i18n="scheduleFutureShifts">Schedule future shifts</span>
+      </span>
+      <span class="tab-badge" data-badge="plan">0</span>
+    </button>
+
+  </nav>
+
+  <section class="cal-card">
+    <div class="cal-head">
+      <button class="nav-btn" id="prevMonth" data-i18n-aria="previousMonth" aria-label="Previous month">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M14.5 6l-6 6 6 6"/>
+        </svg>
+      </button>
+      <div class="cal-title-wrap">
+        <div class="cal-month" id="monthLabel">—</div>
+        <div class="cal-sub" id="monthSub">—</div>
+      </div>
+      <button class="nav-btn" id="nextMonth" data-i18n-aria="nextMonth" aria-label="Next month">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M9.5 6l6 6-6 6"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="weekdays" id="weekdays" aria-hidden="true"></div>
+    <div class="grid" id="grid" role="grid" aria-label="Calendar days"></div>
+
+    <div class="legend">
+      <span class="lg"><i class="dot green"></i><span data-i18n="worked">Worked</span></span>
+      <span class="lg"><i class="dot slate"></i><span data-i18n="dayOff">Day off</span></span>
+      <span class="lg"><i class="dot blue"></i><span data-i18n="today">Today</span></span>
+    </div>
+  </section>
+
+</main>
+
+<div class="overlay" id="overlay"></div>
+
+<div class="sheet" id="daySheet" role="dialog" aria-modal="true" aria-labelledby="sheetTitle">
+  <div class="sheet-grip"></div>
+  <div class="sheet-head">
+    <div style="flex:1;min-width:0;">
+      <div class="sheet-title" id="sheetTitle">—</div>
+      <div class="sheet-sub" id="sheetSub">Choose an entry type</div>
+    </div>
+    <button class="icon-btn small" id="daySheetClose" data-i18n-aria="close" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
+        <path d="M6 6l12 12M18 6L6 18"/>
+      </svg>
+    </button>
+  </div>
+
+  <button class="sheet-btn worked" type="button" data-action="worked">
+    <span class="sb-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 13l4 4L19 7"/>
+      </svg>
+    </span>
+    <span class="sb-body">
+      <span class="sb-title" data-i18n="workedShift">Worked Shift</span>
+      <span class="sb-desc" data-i18n="markWorkedDesc">Mark this day as a completed shift</span>
+    </span>
+  </button>
+
+  <button class="sheet-btn off" type="button" data-action="off">
+    <span class="sb-ico">
+      <svg viewBox="0 0 24 24" fill="currentColor">
+        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+      </svg>
+    </span>
+    <span class="sb-body">
+      <span class="sb-title" data-i18n="dayOffTitle">Day Off</span>
+      <span class="sb-desc" data-i18n="markOffDesc">Mark this day as rest / leave</span>
+    </span>
+  </button>
+
+  <button class="sheet-btn clear" type="button" data-action="clear">
+    <span class="sb-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 7h16M9 7V5.4A1.4 1.4 0 0 1 10.4 4h3.2A1.4 1.4 0 0 1 15 5.4V7M6.5 7l.9 12.1A1.9 1.9 0 0 0 9.3 21h5.4a1.9 1.9 0 0 0 1.9-1.9L17.5 7"/>
+      </svg>
+    </span>
+    <span class="sb-body">
+      <span class="sb-title" data-i18n="clearDataEntry">Clear Data Entry</span>
+      <span class="sb-desc" data-i18n="removeStatusDesc">Remove any status from this day</span>
+    </span>
+  </button>
+</div>
+
+<div class="sheet" id="settingsSheet" role="dialog" aria-modal="true" aria-labelledby="settingsTitle">
+  <div class="sheet-grip"></div>
+  <div class="sheet-head">
+    <div style="flex:1;min-width:0;">
+      <div class="sheet-title" id="settingsTitle" data-i18n="settings">Settings</div>
+      <div class="sheet-sub" data-i18n="prefsSaved">Preferences are saved on this device</div>
+    </div>
+    <button class="icon-btn small" id="settingsClose" data-i18n-aria="close" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
+        <path d="M6 6l12 12M18 6L6 18"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="set-row">
+    <span class="sb-ico" style="background:rgba(26,209,229,.13);color:#1AD1E5;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <path d="M12 3v5M12 16v5M3 12h5M16 12h5"/>
+        <circle cx="12" cy="12" r="2.6"/>
+      </svg>
+    </span>
+    <span class="sb-body">
+      <span class="sb-title" data-i18n="hapticFeedback">Haptic Feedback</span>
+      <span class="sb-desc" data-i18n="vibrateOnDayTaps">Vibrate on day taps</span>
+    </span>
+    <button class="switch" type="button" role="switch" aria-checked="true" data-toggle="haptic" data-i18n-aria="toggleHaptic" aria-label="Toggle haptic feedback"></button>
+  </div>
+
+  <div class="set-row">
+    <span class="sb-ico" style="background:rgba(47,107,255,.14);color:#6AA8FF;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <rect x="3" y="4.6" width="18" height="16" rx="3.4"/>
+        <path d="M3 9.6h18M8 2.6v4M16 2.6v4"/>
+      </svg>
+    </span>
+    <span class="sb-body">
+      <span class="sb-title" data-i18n="weekStartsMonday">Week Starts Monday</span>
+      <span class="sb-desc" data-i18n="offWeekStartsSunday">Off = week starts Sunday</span>
+    </span>
+    <button class="switch" type="button" role="switch" aria-checked="true" data-toggle="weekStart" data-i18n-aria="toggleWeekStart" aria-label="Toggle week start"></button>
+  </div>
+
+  <div class="set-row">
+    <span class="sb-ico" style="background:rgba(245,158,11,.13);color:#FBBF24;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="9"/>
+        <path d="M3 12h18M12 3a15 15 0 0 1 0 18M12 3a15 15 0 0 0 0 18"/>
+      </svg>
+    </span>
+    <span class="sb-body">
+      <span class="sb-title" data-i18n="language">Language</span>
+      <span class="sb-desc" data-i18n="languageDesc">App display language</span>
+    </span>
+  </div>
+
+  <div class="lang-group" id="langGroup" role="group" data-i18n-aria="language">
+    <button class="lang-btn" type="button" data-lang="en">English</button>
+    <button class="lang-btn" type="button" data-lang="tr">Türkçe</button>
+    <button class="lang-btn" type="button" data-lang="ru">Русский</button>
+  </div>
+
+  <button class="sheet-btn clear" type="button" id="btnResetAll" style="margin-top:4px;">
+    <span class="sb-ico">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12a9 9 0 1 0 3-6.7"/>
+        <path d="M3 4.5V10h5.5"/>
+      </svg>
+    </span>
+    <span class="sb-body">
+      <span class="sb-title" data-i18n="resetAllData">Reset all data</span>
+      <span class="sb-desc" data-i18n="deletesEveryCompanyLog">Deletes every company log permanently</span>
+    </span>
+  </button>
+</div>
+
+<aside class="drawer" id="drawer" aria-hidden="true" aria-label="Main menu">
+  <div class="drawer-head">
+    <div style="flex:1;min-width:0;">
+      <div class="drawer-title">ShiftMate Pro</div>
+      <div class="drawer-sub" id="drawerCompany">Acibadem</div>
+    </div>
+    <button class="icon-btn small" id="drawerClose" data-i18n-aria="close" aria-label="Close menu">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round">
+        <path d="M6 6l12 12M18 6L6 18"/>
+      </svg>
+    </button>
+  </div>
+
+  <div class="stats">
+    <div class="stat"><div class="stat-num" id="statWorked">0</div><div class="stat-lbl" data-i18n="shifts">Shifts</div></div>
+    <div class="stat"><div class="stat-num" id="statOff">0</div><div class="stat-lbl" data-i18n="daysOff">Days off</div></div>
+    <div class="stat"><div class="stat-num" id="statTotal">0</div><div class="stat-lbl" data-i18n="allTime">All time</div></div>
+  </div>
+
+  <div class="drawer-actions">
+    <button class="drawer-btn" id="btnExport" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 3v12M7.5 10.5L12 15l4.5-4.5M4 20h16"/>
+      </svg>
+      <span data-i18n="exportJson">Export JSON Backup</span>
+    </button>
+    <button class="drawer-btn danger" id="btnClearCompany" type="button">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 7h16M9 7V5.4A1.4 1.4 0 0 1 10.4 4h3.2A1.4 1.4 0 0 1 15 5.4V7M6.5 7l.9 12.1A1.9 1.9 0 0 0 9.3 21h5.4a1.9 1.9 0 0 0 1.9-1.9L17.5 7"/>
+      </svg>
+      <span id="clearCompanyLabel">Clear company data</span>
+    </button>
+  </div>
+
+  <div class="drawer-foot" data-i18n="footer">v1.0.0 · Stored locally on this device</div>
+</aside>
+
+<div class="modal-overlay" id="modalOverlay"></div>
+
+<div class="confirm-modal" id="confirmModal" role="dialog" aria-modal="true" aria-labelledby="confirmTitle" aria-describedby="confirmMsg">
+  <div class="confirm-ico danger" id="confirmIcon" aria-hidden="true"></div>
+  <div class="confirm-title" id="confirmTitle">—</div>
+  <div class="confirm-msg" id="confirmMsg">—</div>
+  <div class="confirm-entity" id="confirmEntity" hidden>
+    <span class="ce-dot" aria-hidden="true"></span>
+    <span class="ce-text" id="confirmEntityText"></span>
+  </div>
+  <div class="confirm-note" id="confirmNote" hidden></div>
+  <div class="confirm-actions">
+    <button class="confirm-btn ghost" id="confirmCancel" type="button">Cancel</button>
+    <button class="confirm-btn danger" id="confirmOk" type="button">Confirm</button>
+  </div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var LS = {
+    company:   "shiftmate.pro.company",
+    tab:       "shiftmate.pro.tab",
+    logs:      "shiftmate.pro.logs",
+    companies: "shiftmate.pro.companies",
+    weekStart: "shiftmate.pro.weekStart",
+    haptic:    "shiftmate.pro.haptic",
+    lang:      "shiftmate.pro.lang"
+  };
+
+  var SS_SPLASH = "shiftmate.pro.splashShown";
+
+  var TABS = {
+    self: { key: "Self Log",   sub: "Self Log Filter Active" },
+    plan: { key: "Plan Ahead", sub: "Planning Mode Active" }
+  };
+
+  var DEFAULT_COMPANIES = ["Acibadem", "Medipol", "Memorial", "Anadolu Saglik"];
+
+  var STATUS = {
+    worked: "Worked Shift",
+    off:    "Day Off"
+  };
+
+  var ICON_TICK  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
+  var ICON_MOON  = '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>';
+  var ICON_CHECK = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>';
+  var ICON_TRASH = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 7h16M9 7V5.4A1.4 1.4 0 0 1 10.4 4h3.2A1.4 1.4 0 0 1 15 5.4V7M6.5 7l.9 12.1A1.9 1.9 0 0 0 9.3 21h5.4a1.9 1.9 0 0 0 1.9-1.9L17.5 7"/></svg>';
+  var ICON_WARN  = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.9 18a2 2 0 0 0 1.7 3h16.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/><path d="M12 9.2v4.2M12 17h.01"/></svg>';
+  var ICON_ERASER = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8.6 20.4H20M13.2 4.6 4.9 12.9a2 2 0 0 0 0 2.8l3.4 3.4a2 2 0 0 0 2.8 0l8.3-8.3a2 2 0 0 0 0-2.8l-3.4-3.4a2 2 0 0 0-2.8 0z"/><path d="M9.7 8.1 16.2 14.6"/></svg>';
+
+  var $ = function (id) { return document.getElementById(id); };
+
+  var companyInput   = $("companyInput");
+  var companySub     = $("companySub");
+  var btnCompanyMenu = $("btnCompanyMenu");
+  var companyMenu    = $("companyMenu");
+
+  var tabsEl         = $("tabs");
+  var gridEl         = $("grid");
+  var weekdaysEl     = $("weekdays");
+  var monthLabel     = $("monthLabel");
+  var monthSub       = $("monthSub");
+
+  var overlay        = $("overlay");
+  var daySheet       = $("daySheet");
+  var sheetTitle     = $("sheetTitle");
+  var sheetSub       = $("sheetSub");
+  var daySheetClose  = $("daySheetClose");
+  var settingsSheet  = $("settingsSheet");
+  var settingsClose  = $("settingsClose");
+  var drawer         = $("drawer");
+  var drawerClose    = $("drawerClose");
+
+  var drawerCompany  = $("drawerCompany");
+  var statWorked     = $("statWorked");
+  var statOff        = $("statOff");
+  var statTotal      = $("statTotal");
+
+  var btnExport         = $("btnExport");
+  var btnClearCompany   = $("btnClearCompany");
+  var clearCompanyLabel = $("clearCompanyLabel");
+  var btnResetAll       = $("btnResetAll");
+
+  var toastEl        = $("toast");
+
+  var modalOverlay     = $("modalOverlay");
+  var confirmModal     = $("confirmModal");
+  var confirmIcon      = $("confirmIcon");
+  var confirmTitle     = $("confirmTitle");
+  var confirmMsg       = $("confirmMsg");
+  var confirmEntity    = $("confirmEntity");
+  var confirmEntityTxt = $("confirmEntityText");
+  var confirmNote      = $("confirmNote");
+  var confirmOk        = $("confirmOk");
+  var confirmCancel    = $("confirmCancel");
+
+  var now = new Date();
+
+  var toastTimer        = null;
+  var pendingConfirm    = null;
+  var confirmOpenFlag   = false;
+  var activeSheetKey    = null;
+  var isCreatingCompany = false;
+
+  var state = {
+    company:   "Acibadem",
+    companies: DEFAULT_COMPANIES.slice(),
+    tab:       "self",
+    logs:      {},
+    weekStart: 1,
+    haptic:    true,
+    lang:      "en",
+    view:      new Date(now.getFullYear(), now.getMonth(), 1)
+  };
+
+  var I18N = {
+    en: {
+      splashTag: "Preparing your calendar…",
+      activeCompany: "Active Company",
+      selfLogFilterActive: "Self Log Filter Active",
+      planningModeActive: "Planning Mode Active",
+      selfLog: "Self Log",
+      logYourOwnShifts: "Log your own shifts",
+      planAhead: "Plan Ahead",
+      scheduleFutureShifts: "Schedule future shifts",
+      showingDays: "Showing {n} days",
+      worked: "Worked",
+      dayOff: "Day off",
+      today: "Today",
+      chooseEntryType: "Choose an entry type",
+      workedShift: "Worked Shift",
+      markWorkedDesc: "Mark this day as a completed shift",
+      dayOffTitle: "Day Off",
+      markOffDesc: "Mark this day as rest / leave",
+      clearDataEntry: "Clear Data Entry",
+      removeStatusDesc: "Remove any status from this day",
+      settings: "Settings",
+      prefsSaved: "Preferences are saved on this device",
+      hapticFeedback: "Haptic Feedback",
+      vibrateOnDayTaps: "Vibrate on day taps",
+      weekStartsMonday: "Week Starts Monday",
+      offWeekStartsSunday: "Off = week starts Sunday",
+      language: "Language",
+      languageDesc: "App display language",
+      resetAllData: "Reset all data",
+      deletesEveryCompanyLog: "Deletes every company log permanently",
+      shifts: "Shifts",
+      daysOff: "Days off",
+      allTime: "All time",
+      exportJson: "Export JSON Backup",
+      clearCompanyData: "Clear {company} data",
+      footer: "v1.0.0 · Stored locally on this device",
+      deleteCompanyTitle: "Delete this company?",
+      deleteCompanyMsg: "Every shift log stored for this company will be permanently removed from this device. This cannot be undone.",
+      otherCompaniesNotAffected: "Other companies are not affected.",
+      deleteCompany: "Delete company",
+      keepIt: "Keep it",
+      clearCompanyTitle: "Clear company data?",
+      clearCompanyMsg: "All logged days for this company will be permanently deleted. The company itself stays in your list.",
+      clearData: "Clear data",
+      cancel: "Cancel",
+      resetTitle: "Reset everything?",
+      resetMsg: "Every company and every logged day will be deleted from this device. This action cannot be undone.",
+      resetEntity: "{companies} companies · {withData} with data",
+      companyListReturnsDefaults: "Company list returns to defaults.",
+      resetAll: "Reset all",
+      newCompany: "+ New company...",
+      enterCompanyName: "Enter company name...",
+      companyAlreadyExists: "Company already exists",
+      created: "Created: {name}",
+      switchedTo: "Switched to {name}",
+      deleted: "{name} deleted",
+      cleared: "Cleared",
+      exported: "Exported",
+      dataClearedFor: "Data cleared for {name}",
+      resetToDefaults: "Reset to defaults",
+      areYouSure: "Are you sure?",
+      confirm: "Confirm",
+      openSettings: "Open settings",
+      openMenu: "Open menu",
+      previousMonth: "Previous month",
+      nextMonth: "Next month",
+      close: "Close",
+      toggleHaptic: "Toggle haptic feedback",
+      toggleWeekStart: "Toggle week start",
+      deleteCompanyAria: "Delete {name}"
+    },
+    tr: {
+      splashTag: "Takviminiz hazırlanıyor…",
+      activeCompany: "Aktif Şirket",
+      selfLogFilterActive: "Kendi Kaydı Filtresi Aktif",
+      planningModeActive: "Planlama Modu Aktif",
+      selfLog: "Kendi Kaydım",
+      logYourOwnShifts: "Kendi vardiyalarını kaydet",
+      planAhead: "Önceden Planla",
+      scheduleFutureShifts: "Gelecek vardiyaları planla",
+      showingDays: "Gösterilen {n} gün",
+      worked: "Çalışıldı",
+      dayOff: "İzin günü",
+      today: "Bugün",
+      chooseEntryType: "Bir giriş türü seçin",
+      workedShift: "Çalışılan Vardiya",
+      markWorkedDesc: "Bu günü tamamlanmış vardiya olarak işaretle",
+      dayOffTitle: "İzin Günü",
+      markOffDesc: "Bu günü dinlenme / izin olarak işaretle",
+      clearDataEntry: "Veri Girişini Temizle",
+      removeStatusDesc: "Bu gündeki durumu kaldır",
+      settings: "Ayarlar",
+      prefsSaved: "Tercihler bu cihazda saklanır",
+      hapticFeedback: "Dokunsal Geri Bildirim",
+      vibrateOnDayTaps: "Gün dokunuşlarında titreşim",
+      weekStartsMonday: "Hafta Pazartesi Başlar",
+      offWeekStartsSunday: "Kapalı = hafta Pazar başlar",
+      language: "Dil",
+      languageDesc: "Uygulama görüntüleme dili",
+      resetAllData: "Tüm verileri sıfırla",
+      deletesEveryCompanyLog: "Her şirket kaydını kalıcı olarak siler",
+      shifts: "Vardiyalar",
+      daysOff: "İzin günleri",
+      allTime: "Tüm zamanlar",
+      exportJson: "JSON Yedeği Dışa Aktar",
+      clearCompanyData: "{company} verilerini temizle",
+      footer: "v1.0.0 · Bu cihazda yerel olarak saklanır",
+      deleteCompanyTitle: "Bu şirket silinsin mi?",
+      deleteCompanyMsg: "Bu şirket için saklanan tüm vardiya kayıtları bu cihazdan kalıcı olarak kaldırılacak. Bu geri alınamaz.",
+      otherCompaniesNotAffected: "Diğer şirketler etkilenmez.",
+      deleteCompany: "Şirketi sil",
+      keepIt: "Kalsın",
+      clearCompanyTitle: "Şirket verileri temizlensin mi?",
+      clearCompanyMsg: "Bu şirket için kaydedilen tüm günler kalıcı olarak silinecek. Şirket listenizde kalır.",
+      clearData: "Verileri temizle",
+      cancel: "İptal",
+      resetTitle: "Her şey sıfırlansın mı?",
+      resetMsg: "Her şirket ve kaydedilen her gün bu cihazdan silinecek. Bu işlem geri alınamaz.",
+      resetEntity: "{companies} şirket · {withData} verili",
+      companyListReturnsDefaults: "Şirket listesi varsayılanlara döner.",
+      resetAll: "Tümünü sıfırla",
+      newCompany: "+ Yeni şirket...",
+      enterCompanyName: "Şirket adı girin...",
+      companyAlreadyExists: "Şirket zaten mevcut",
+      created: "Oluşturuldu: {name}",
+      switchedTo: "{name} şirketine geçildi",
+      deleted: "{name} silindi",
+      cleared: "Temizlendi",
+      exported: "Dışa aktarıldı",
+      dataClearedFor: "{name} için veriler temizlendi",
+      resetToDefaults: "Varsayılanlara sıfırlandı",
+      areYouSure: "Emin misiniz?",
+      confirm: "Onayla",
+      openSettings: "Ayarları aç",
+      openMenu: "Menüyü aç",
+      previousMonth: "Önceki ay",
+      nextMonth: "Sonraki ay",
+      close: "Kapat",
+      toggleHaptic: "Dokunsal geri bildirimi aç/kapat",
+      toggleWeekStart: "Hafta başlangıcını değiştir",
+      deleteCompanyAria: "{name} şirketini sil"
+    },
+    ru: {
+      splashTag: "Подготовка календаря…",
+      activeCompany: "Активная компания",
+      selfLogFilterActive: "Фильтр личных записей активен",
+      planningModeActive: "Режим планирования активен",
+      selfLog: "Личный журнал",
+      logYourOwnShifts: "Записывайте свои смены",
+      planAhead: "Планирование",
+      scheduleFutureShifts: "Планируйте будущие смены",
+      showingDays: "Показано {n} дней",
+      worked: "Отработано",
+      dayOff: "Выходной",
+      today: "Сегодня",
+      chooseEntryType: "Выберите тип записи",
+      workedShift: "Отработанная смена",
+      markWorkedDesc: "Отметить этот день как завершённую смену",
+      dayOffTitle: "Выходной",
+      markOffDesc: "Отметить этот день как отдых / отпуск",
+      clearDataEntry: "Очистить запись",
+      removeStatusDesc: "Удалить статус с этого дня",
+      settings: "Настройки",
+      prefsSaved: "Настройки сохраняются на этом устройстве",
+      hapticFeedback: "Тактильная отдача",
+      vibrateOnDayTaps: "Вибрация при нажатии на день",
+      weekStartsMonday: "Неделя начинается с понедельника",
+      offWeekStartsSunday: "Выкл = неделя начинается с воскресенья",
+      language: "Язык",
+      languageDesc: "Язык интерфейса приложения",
+      resetAllData: "Сбросить все данные",
+      deletesEveryCompanyLog: "Удаляет журналы всех компаний навсегда",
+      shifts: "Смены",
+      daysOff: "Выходные",
+      allTime: "Всего",
+      exportJson: "Экспорт JSON-резервной копии",
+      clearCompanyData: "Очистить данные {company}",
+      footer: "v1.0.0 · Хранится локально на этом устройстве",
+      deleteCompanyTitle: "Удалить эту компанию?",
+      deleteCompanyMsg: "Все записи смен этой компании будут безвозвратно удалены с этого устройства. Это действие нельзя отменить.",
+      otherCompaniesNotAffected: "Другие компании не затронуты.",
+      deleteCompany: "Удалить компанию",
+      keepIt: "Оставить",
+      clearCompanyTitle: "Очистить данные компании?",
+      clearCompanyMsg: "Все записанные дни этой компании будут безвозвратно удалены. Сама компания останется в вашем списке.",
+      clearData: "Очистить данные",
+      cancel: "Отмена",
+      resetTitle: "Сбросить всё?",
+      resetMsg: "Все компании и все записанные дни будут удалены с этого устройства. Это действие нельзя отменить.",
+      resetEntity: "{companies} компаний · {withData} с данными",
+      companyListReturnsDefaults: "Список компаний вернётся к значениям по умолчанию.",
+      resetAll: "Сбросить всё",
+      newCompany: "+ Новая компания...",
+      enterCompanyName: "Введите название компании...",
+      companyAlreadyExists: "Компания уже существует",
+      created: "Создано: {name}",
+      switchedTo: "Переключено на {name}",
+      deleted: "{name} удалено",
+      cleared: "Очищено",
+      exported: "Экспортировано",
+      dataClearedFor: "Данные очищены для {name}",
+      resetToDefaults: "Сброшено к настройкам по умолчанию",
+      areYouSure: "Вы уверены?",
+      confirm: "Подтвердить",
+      openSettings: "Открыть настройки",
+      openMenu: "Открыть меню",
+      previousMonth: "Предыдущий месяц",
+      nextMonth: "Следующий месяц",
+      close: "Закрыть",
+      toggleHaptic: "Переключить тактильную отдачу",
+      toggleWeekStart: "Переключить начало недели",
+      deleteCompanyAria: "Удалить {name}"
+    }
+  };
+
+  function t(key, vars) {
+    var dict = I18N[state.lang] || I18N.en;
+    var str = dict[key] || I18N.en[key] || key;
+    if (vars) {
+      Object.keys(vars).forEach(function (k) {
+        str = str.replace(new RegExp("\\{" + k + "\\}", "g"), vars[k]);
+      });
+    }
+    return str;
+  }
+
+  function getLocale() {
+    if (state.lang === "tr") return "tr-TR";
+    if (state.lang === "ru") return "ru-RU";
+    return "en-US";
+  }
+
+  function applyTranslations() {
+    document.documentElement.lang = state.lang;
+
+    var nodes = document.querySelectorAll("[data-i18n]");
+    for (var i = 0; i < nodes.length; i++) {
+      var el = nodes[i];
+      var key = el.getAttribute("data-i18n");
+      if (key) el.textContent = t(key);
+    }
+
+    var phNodes = document.querySelectorAll("[data-i18n-placeholder]");
+    for (var p = 0; p < phNodes.length; p++) {
+      var phEl = phNodes[p];
+      var phKey = phEl.getAttribute("data-i18n-placeholder");
+      if (phKey) phEl.setAttribute("placeholder", t(phKey));
+    }
+
+    var ariaNodes = document.querySelectorAll("[data-i18n-aria]");
+    for (var a = 0; a < ariaNodes.length; a++) {
+      var ariaEl = ariaNodes[a];
+      var ariaKey = ariaEl.getAttribute("data-i18n-aria");
+      if (ariaKey) ariaEl.setAttribute("aria-label", t(ariaKey));
+    }
+
+    var langBtns = document.querySelectorAll(".lang-btn");
+    for (var l = 0; l < langBtns.length; l++) {
+      var b = langBtns[l];
+      var isActive = b.getAttribute("data-lang") === state.lang;
+      b.classList.toggle("is-active", isActive);
+      b.setAttribute("aria-pressed", isActive ? "true" : "false");
+    }
+  }
+
+  function getWeekdayNames() {
+    var loc = getLocale();
+    var names = [];
+    var startOffset = state.weekStart === 1 ? 0 : -1;
+    for (var d = 0; d < 7; d++) {
+      var dt = new Date(2024, 0, 1 + startOffset + d);
+      names.push(new Intl.DateTimeFormat(loc, { weekday: "short" }).format(dt));
+    }
+    return names;
+  }
+
+  function pad(n) { return n < 10 ? "0" + n : String(n); }
+
+  function keyOf(d) {
+    return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate());
+  }
+
+  function formatLongDate(dateKey) {
+    var p = dateKey.split("-");
+    var d = new Date(Number(p[0]), Number(p[1]) - 1, Number(p[2]));
+    return d.toLocaleDateString(getLocale(), { weekday: "long", day: "numeric", month: "long" });
+  }
+
+  function hapticTick() {
+    if (state.haptic && typeof navigator.vibrate === "function") {
+      try { navigator.vibrate(9); } catch (e) {}
+    }
+  }
+
+  function toast(msg) {
+    toastEl.textContent = msg;
+    toastEl.classList.add("show");
+    if (toastTimer) clearTimeout(toastTimer);
+    toastTimer = setTimeout(function () {
+      toastEl.classList.remove("show");
+    }, 1900);
+  }
+
+  function lockScroll() { document.body.classList.add("locked"); }
+
+  function unlockIfNoSheet() {
+    if (daySheet.classList.contains("open") || settingsSheet.classList.contains("open")) return;
+    document.body.classList.remove("locked");
+  }
+
+  function activeTabKey() { return TABS[state.tab].key; }
+
+  function entries() {
+    var c = state.logs[state.company];
+    if (!c || typeof c !== "object") return {};
+    var tk = c[activeTabKey()];
+    if (!tk || typeof tk !== "object") return {};
+    return tk;
+  }
+
+  function setStatus(dateKey, status) {
+    var cName = state.company;
+    var tKey  = activeTabKey();
+
+    if (!state.logs[cName]) state.logs[cName] = {};
+    if (!state.logs[cName][tKey]) state.logs[cName][tKey] = {};
+
+    if (status) {
+      state.logs[cName][tKey][dateKey] = status;
+    } else {
+      delete state.logs[cName][tKey][dateKey];
+    }
+
+    if (Object.keys(state.logs[cName][tKey]).length === 0) delete state.logs[cName][tKey];
+    if (Object.keys(state.logs[cName]).length === 0) delete state.logs[cName];
+
+    persistLogs();
+  }
+
+  function persistLogs() {
+    try { localStorage.setItem(LS.logs, JSON.stringify(state.logs)); } catch (e) {}
+  }
+  function persistCompanies() {
+    try { localStorage.setItem(LS.companies, JSON.stringify(state.companies)); } catch (e) {}
+  }
+  function persistAll() {
+    try {
+      localStorage.setItem(LS.company, state.company);
+      localStorage.setItem(LS.tab, state.tab);
+      localStorage.setItem(LS.logs, JSON.stringify(state.logs));
+      localStorage.setItem(LS.companies, JSON.stringify(state.companies));
+      localStorage.setItem(LS.weekStart, String(state.weekStart));
+      localStorage.setItem(LS.haptic, String(state.haptic));
+      localStorage.setItem(LS.lang, state.lang);
+    } catch (e) {}
+  }
+
+  function loadState() {
+    try {
+      var c = localStorage.getItem(LS.company);
+      if (c) state.company = c;
+
+      var tb = localStorage.getItem(LS.tab);
+      if (tb && TABS[tb]) state.tab = tb;
+
+      var raw = localStorage.getItem(LS.logs);
+      if (raw) {
+        var parsed = JSON.parse(raw);
+        if (parsed && typeof parsed === "object" && !Array.isArray(parsed)) {
+          state.logs = parsed;
+        }
+      }
+
+      var cList = localStorage.getItem(LS.companies);
+      if (cList) {
+        try {
+          var parsedC = JSON.parse(cList);
+          if (Array.isArray(parsedC) && parsedC.length > 0) state.companies = parsedC;
+        } catch (e) {}
+      }
+
+      var ws = localStorage.getItem(LS.weekStart);
+      if (ws !== null) state.weekStart = Number(ws);
+
+      var hap = localStorage.getItem(LS.haptic);
+      if (hap !== null) state.haptic = hap === "true";
+
+      var lang = localStorage.getItem(LS.lang);
+      if (lang && I18N[lang]) state.lang = lang;
+    } catch (e) {
+      console.error("Failed to load state:", e);
+    }
+  }
+
+  function openConfirm(opts) {
+    var o = opts || {};
+    confirmIcon.className = "confirm-ico " + (o.tone === "warn" ? "warn" : o.tone === "info" ? "info" : "danger");
+    confirmIcon.innerHTML = o.icon || ICON_WARN;
+    confirmTitle.textContent = o.title || t("areYouSure");
+    confirmMsg.textContent = o.message || "";
+
+    if (o.entity) {
+      confirmEntityTxt.textContent = o.entity;
+      confirmEntity.hidden = false;
+    } else {
+      confirmEntityTxt.textContent = "";
+      confirmEntity.hidden = true;
+    }
+
+    if (o.note) {
+      confirmNote.textContent = o.note;
+      confirmNote.hidden = false;
+    } else {
+      confirmNote.textContent = "";
+      confirmNote.hidden = true;
+    }
+
+    confirmOk.textContent = o.confirmLabel || t("confirm");
+    confirmOk.className = "confirm-btn " + (o.tone === "warn" ? "warn" : "danger");
+    confirmCancel.textContent = o.cancelLabel || t("cancel");
+
+    pendingConfirm = typeof o.onConfirm === "function" ? o.onConfirm : null;
+    confirmOpenFlag = true;
+    modalOverlay.classList.add("open");
+    confirmModal.classList.add("open");
+    lockScroll();
+
+    setTimeout(function () {
+      try { confirmCancel.focus(); } catch (e) {}
+    }, 60);
+  }
+
+  function closeConfirm() {
+    pendingConfirm = null;
+    confirmOpenFlag = false;
+    modalOverlay.classList.remove("open");
+    confirmModal.classList.remove("open");
+    unlockIfNoSheet();
+  }
+
+  function runConfirm() {
+    var cb = pendingConfirm;
+    pendingConfirm = null;
+    confirmOpenFlag = false;
+    modalOverlay.classList.remove("open");
+    confirmModal.classList.remove("open");
+    hapticTick();
+    if (typeof cb === "function") cb();
+    unlockIfNoSheet();
+  }
+
+  confirmOk.addEventListener("click", function (e) { e.preventDefault(); runConfirm(); });
+  confirmCancel.addEventListener("click", function (e) { e.preventDefault(); hapticTick(); closeConfirm(); });
+  modalOverlay.addEventListener("click", function () { closeConfirm(); });
+
+  function renderDropdown() {
+    companyMenu.innerHTML = "";
+
+    state.companies.forEach(function (company) {
+      var row = document.createElement("div");
+      row.className = "cm-item" + (company === state.company ? " is-current" : "");
+      row.setAttribute("role", "menuitem");
+      row.setAttribute("data-company", company);
+
+      var nameSpan = document.createElement("span");
+      nameSpan.className = "cm-name";
+      nameSpan.textContent = company;
+      row.appendChild(nameSpan);
+
+      if (company !== state.company) {
+        var delBtn = document.createElement("button");
+        delBtn.type = "button";
+        delBtn.className = "cm-delete";
+        delBtn.innerHTML = ICON_TRASH;
+        delBtn.setAttribute("aria-label", t("deleteCompanyAria", { name: company }));
+
+        delBtn.addEventListener("click", function (e) {
+          e.stopPropagation();
+          e.preventDefault();
+          hapticTick();
+          closeCompanyMenu();
+          requestCompanyDelete(company);
+        });
+
+        row.appendChild(delBtn);
+      }
+
+      row.addEventListener("click", function () {
+        if (company === state.company) { closeCompanyMenu(); return; }
+        state.company = company;
+        try { localStorage.setItem(LS.company, company); } catch (e) {}
+        closeCompanyMenu();
+        renderAll();
+        toast(t("switchedTo", { name: company }));
+      });
+
+      companyMenu.appendChild(row);
+    });
+
+    if (!isCreatingCompany) {
+      var addRow = document.createElement("div");
+      addRow.className = "cm-item add";
+      addRow.textContent = t("newCompany");
+      addRow.addEventListener("click", function () { enterNewCompanyMode(); });
+      companyMenu.appendChild(addRow);
+    }
+  }
+
+  function enterNewCompanyMode() {
+    isCreatingCompany = true;
+
+    var inputRow = document.createElement("div");
+    inputRow.className = "cm-item input-row";
+
+    var input = document.createElement("input");
+    input.type = "text";
+    input.className = "cm-input";
+    input.placeholder = t("enterCompanyName");
+    input.autocomplete = "off";
+    input.spellcheck = false;
+
+    var confirmBtn = document.createElement("button");
+    confirmBtn.type = "button";
+    confirmBtn.className = "cm-confirm";
+    confirmBtn.innerHTML = ICON_CHECK;
+    confirmBtn.setAttribute("aria-label", t("confirm"));
+
+    inputRow.appendChild(input);
+    inputRow.appendChild(confirmBtn);
+
+    companyMenu.innerHTML = "";
+    companyMenu.appendChild(inputRow);
+    input.focus();
+
+    function saveNewCompany() {
+      var trimmed = input.value.trim();
+      if (!trimmed) {
+        isCreatingCompany = false;
+        renderDropdown();
+        return;
+      }
+      if (state.companies.indexOf(trimmed) !== -1) {
+        toast(t("companyAlreadyExists"));
+        input.focus();
+        input.select();
+        return;
+      }
+
+      state.companies.push(trimmed);
+      state.logs[trimmed] = { "Self Log": {}, "Plan Ahead": {} };
+
+      state.company = trimmed;
+      try { localStorage.setItem(LS.company, trimmed); } catch (e) {}
+
+      persistCompanies();
+      persistLogs();
+      isCreatingCompany = false;
+      toast(t("created", { name: trimmed }));
+      renderAll();
+      closeCompanyMenu();
+    }
+
+    input.addEventListener("keydown", function (e) {
+      if (e.key === "Enter") { e.preventDefault(); saveNewCompany(); }
+      else if (e.key === "Escape") { e.preventDefault(); isCreatingCompany = false; renderDropdown(); }
+    });
+
+    confirmBtn.addEventListener("click", function (e) { e.preventDefault(); saveNewCompany(); });
+
+    input.addEventListener("blur", function () {
+      setTimeout(function () {
+        if (isCreatingCompany) { isCreatingCompany = false; renderDropdown(); }
+      }, 140);
+    });
+  }
+
+  function requestCompanyDelete(target) {
+    openConfirm({
+      tone: "danger",
+      icon: ICON_TRASH,
+      title: t("deleteCompanyTitle"),
+      message: t("deleteCompanyMsg"),
+      entity: target,
+      note: t("otherCompaniesNotAffected"),
+      confirmLabel: t("deleteCompany"),
+      cancelLabel: t("keepIt"),
+      onConfirm: function () { performCompanyDelete(target); }
+    });
+  }
+
+  function performCompanyDelete(target) {
+    state.companies = state.companies.filter(function (c) { return c !== target; });
+    delete state.logs[target];
+
+    if (state.company === target) {
+      if (state.companies.length > 0) {
+        state.company = state.companies[0];
+      } else {
+        state.companies = DEFAULT_COMPANIES.slice();
+        state.company = "Acibadem";
+      }
+      try { localStorage.setItem(LS.company, state.company); } catch (e) {}
+    }
+
+    persistCompanies();
+    persistLogs();
+
+    toast(t("deleted", { name: target }));
+    renderAll();
+  }
+
+  function closeCompanyMenu() {
+    companyMenu.classList.remove("open");
+    btnCompanyMenu.classList.remove("open");
+    btnCompanyMenu.setAttribute("aria-expanded", "false");
+  }
+
+  function toggleCompanyMenu() {
+    if (companyMenu.classList.contains("open")) {
+      closeCompanyMenu();
+    } else {
+      isCreatingCompany = false;
+      renderDropdown();
+      companyMenu.classList.add("open");
+      btnCompanyMenu.classList.add("open");
+      btnCompanyMenu.setAttribute("aria-expanded", "true");
+    }
+  }
+
+  function closeSettings() {
+    overlay.classList.remove("open");
+    settingsSheet.classList.remove("open");
+    unlockIfNoSheet();
+  }
+
+  function closeDrawer() {
+    drawer.classList.remove("open");
+    drawer.setAttribute("aria-hidden", "true");
+  }
+
+  function openDaySheet(dateKey) {
+    var status = entries()[dateKey];
+    sheetTitle.textContent = formatLongDate(dateKey);
+    sheetSub.textContent = status ? t(status === "worked" ? "workedShift" : "dayOff") : t("chooseEntryType");
+    overlay.classList.add("open");
+    daySheet.classList.add("open");
+    lockScroll();
+  }
+
+  function closeDaySheet() {
+    overlay.classList.remove("open");
+    daySheet.classList.remove("open");
+    activeSheetKey = null;
+    unlockIfNoSheet();
+  }
+
+  function renderCalendar() {
+    var y = state.view.getFullYear();
+    var m = state.view.getMonth();
+    var first = new Date(y, m, 1);
+    var last  = new Date(y, m + 1, 0);
+    var days  = last.getDate();
+
+    monthLabel.textContent = first.toLocaleDateString(getLocale(), { month: "long", year: "numeric" });
+    monthSub.textContent = t("showingDays", { n: days });
+
+    var names = getWeekdayNames();
+
+    var wdHtml = "";
+    for (var i = 0; i < names.length; i++) wdHtml += "<span>" + names[i] + "</span>";
+    weekdaysEl.innerHTML = wdHtml;
+
+    var offset = state.weekStart === 1 ? (first.getDay() + 6) % 7 : first.getDay();
+    var ent = entries();
+    var todayKey = keyOf(new Date());
+
+    var html = "";
+    for (var e = 0; e < offset; e++) html += '<button class="cell out" disabled></button>';
+
+    for (var d = 1; d <= days; d++) {
+      var dateKey = y + "-" + pad(m + 1) + "-" + pad(d);
+      var status = ent[dateKey];
+      var cls = "cell";
+      if (status === "worked") cls += " worked";
+      if (status === "off") cls += " off";
+      if (dateKey === todayKey) cls += " today";
+
+      var icon = status === "worked" ? ICON_TICK : status === "off" ? ICON_MOON : "";
+      html += '<button class="' + cls + '" data-date="' + dateKey + '">' +
+                '<span class="d">' + d + '</span>' +
+                (icon ? '<span class="s">' + icon + '</span>' : '') +
+              '</button>';
+    }
+
+    gridEl.innerHTML = html;
+  }
+
+  function updateStats() {
+    var ent = entries();
+    var worked = 0, off = 0;
+    for (var k in ent) {
+      if (ent[k] === "worked") worked++;
+      else if (ent[k] === "off") off++;
+    }
+    statWorked.textContent = String(worked);
+    statOff.textContent = String(off);
+    statTotal.textContent = String(worked + off);
+
+    var selfCount = 0, planCount = 0;
+    for (var c in state.logs) {
+      var bucket = state.logs[c];
+      if (bucket && bucket["Self Log"]) selfCount += Object.keys(bucket["Self Log"]).length;
+      if (bucket && bucket["Plan Ahead"]) planCount += Object.keys(bucket["Plan Ahead"]).length;
+    }
+    var bSelf = document.querySelector('[data-badge="self"]');
+    var bPlan = document.querySelector('[data-badge="plan"]');
+    if (bSelf) bSelf.textContent = String(selfCount);
+    if (bPlan) bPlan.textContent = String(planCount);
+  }
+
+  function updateUI() {
+    companyInput.value = state.company;
+    companySub.textContent = state.tab === "self" ? t("selfLogFilterActive") : t("planningModeActive");
+    drawerCompany.textContent = state.company;
+    clearCompanyLabel.textContent = t("clearCompanyData", { company: state.company });
+
+    var tabButtons = tabsEl.querySelectorAll("[role=tab]");
+    for (var i = 0; i < tabButtons.length; i++) {
+      var tab = tabButtons[i];
+      var isActive = tab.getAttribute("data-tab") === state.tab;
+      tab.classList.toggle("is-active", isActive);
+      tab.setAttribute("aria-selected", isActive ? "true" : "false");
+    }
+
+    updateStats();
+  }
+
+  function renderAll() {
+    updateUI();
+    renderCalendar();
+  }
+
+  btnCompanyMenu.addEventListener("click", toggleCompanyMenu);
+
+  overlay.addEventListener("click", function () {
+    if (daySheet.classList.contains("open")) closeDaySheet();
+    if (settingsSheet.classList.contains("open")) closeSettings();
+    if (companyMenu.classList.contains("open")) closeCompanyMenu();
+  });
+
+  daySheetClose.addEventListener("click", closeDaySheet);
+  settingsClose.addEventListener("click", closeSettings);
+  drawerClose.addEventListener("click", closeDrawer);
+
+  gridEl.addEventListener("click", function (e) {
+    var btn = e.target.closest("[data-date]");
+    if (!btn) return;
+    hapticTick();
+    activeSheetKey = btn.getAttribute("data-date");
+    openDaySheet(activeSheetKey);
+  });
+
+  var actionBtns = daySheet.querySelectorAll("[data-action]");
+  for (var a = 0; a < actionBtns.length; a++) {
+    (function (btn) {
+      btn.addEventListener("click", function () {
+        if (!activeSheetKey) return;
+        var action = btn.getAttribute("data-action");
+        var status = action === "clear" ? null : action;
+        setStatus(activeSheetKey, status);
+        renderCalendar();
+        updateStats();
+        hapticTick();
+        toast(action === "clear" ? t("cleared") : t(action === "worked" ? "workedShift" : "dayOff"));
+        closeDaySheet();
+      });
+    })(actionBtns[a]);
+  }
+
+  var tabBtns = tabsEl.querySelectorAll("[role=tab]");
+  for (var ti = 0; ti < tabBtns.length; ti++) {
+    (function (tab) {
+      tab.addEventListener("click", function () {
+        var next = tab.getAttribute("data-tab");
+        if (next === state.tab) return;
+        state.tab = next;
+        try { localStorage.setItem(LS.tab, state.tab); } catch (e) {}
+        hapticTick();
+        renderAll();
+      });
+    })(tabBtns[ti]);
+  }
+
+  $("prevMonth").addEventListener("click", function () {
+    state.view = new Date(state.view.getFullYear(), state.view.getMonth() - 1, 1);
+    renderCalendar();
+  });
+  $("nextMonth").addEventListener("click", function () {
+    state.view = new Date(state.view.getFullYear(), state.view.getMonth() + 1, 1);
+    renderCalendar();
+  });
+
+  var switchBtns = settingsSheet.querySelectorAll("[role=switch]");
+  for (var s = 0; s < switchBtns.length; s++) {
+    (function (sw) {
+      sw.addEventListener("click", function () {
+        var toggle = sw.getAttribute("data-toggle");
+        if (toggle === "haptic") {
+          state.haptic = !state.haptic;
+          sw.setAttribute("aria-checked", state.haptic ? "true" : "false");
+          try { localStorage.setItem(LS.haptic, String(state.haptic)); } catch (e) {}
+          hapticTick();
+        } else if (toggle === "weekStart") {
+          state.weekStart = state.weekStart === 1 ? 0 : 1;
+          sw.setAttribute("aria-checked", state.weekStart === 1 ? "true" : "false");
+          try { localStorage.setItem(LS.weekStart, String(state.weekStart)); } catch (e) {}
+          renderCalendar();
+        }
+      });
+    })(switchBtns[s]);
+  }
+
+  var langGroup = $("langGroup");
+  if (langGroup) {
+    langGroup.addEventListener("click", function (e) {
+      var btn = e.target.closest(".lang-btn");
+      if (!btn) return;
+      var lang = btn.getAttribute("data-lang");
+      if (!lang || lang === state.lang || !I18N[lang]) return;
+      state.lang = lang;
+      try { localStorage.setItem(LS.lang, lang); } catch (e) {}
+      hapticTick();
+      applyTranslations();
+      renderAll();
+    });
+  }
+
+  $("btnSettings").addEventListener("click", function () {
+    overlay.classList.add("open");
+    settingsSheet.classList.add("open");
+    lockScroll();
+    var hapSwitch = settingsSheet.querySelector("[data-toggle=haptic]");
+    var wsSwitch = settingsSheet.querySelector("[data-toggle=weekStart]");
+    if (hapSwitch) hapSwitch.setAttribute("aria-checked", state.haptic ? "true" : "false");
+    if (wsSwitch) wsSwitch.setAttribute("aria-checked", state.weekStart === 1 ? "true" : "false");
+  });
+
+  $("btnMenu").addEventListener("click", function () {
+    drawer.classList.add("open");
+    drawer.setAttribute("aria-hidden", "false");
+  });
+
+  btnExport.addEventListener("click", function () {
+    var payload = {
+      company: state.company,
+      companies: state.companies,
+      logs: state.logs,
+      exportedAt: new Date().toISOString()
+    };
+    var json = JSON.stringify(payload, null, 2);
+    var blob = new Blob([json], { type: "application/json" });
+    var url = URL.createObjectURL(blob);
+    var link = document.createElement("a");
+    link.href = url;
+    link.download = "shiftmate-backup-" + new Date().toISOString().split("T")[0] + ".json";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+    toast(t("exported"));
+  });
+
+  btnClearCompany.addEventListener("click", function () {
+    var current = state.company;
+    closeDrawer();
+    openConfirm({
+      tone: "warn",
+      icon: ICON_ERASER,
+      title: t("clearCompanyTitle"),
+      message: t("clearCompanyMsg"),
+      entity: current,
+      note: t("otherCompaniesNotAffected"),
+      confirmLabel: t("clearData"),
+      cancelLabel: t("cancel"),
+      onConfirm: function () {
+        delete state.logs[current];
+        persistLogs();
+        toast(t("dataClearedFor", { name: current }));
+        renderAll();
+      }
+    });
+  });
+
+  btnResetAll.addEventListener("click", function () {
+    openConfirm({
+      tone: "danger",
+      icon: ICON_WARN,
+      title: t("resetTitle"),
+      message: t("resetMsg"),
+      entity: t("resetEntity", { companies: state.companies.length, withData: Object.keys(state.logs).length }),
+      note: t("companyListReturnsDefaults"),
+      confirmLabel: t("resetAll"),
+      cancelLabel: t("cancel"),
+      onConfirm: function () {
+        state.logs = {};
+        state.companies = DEFAULT_COMPANIES.slice();
+        state.company = "Acibadem";
+        persistAll();
+        closeSettings();
+        renderAll();
+        toast(t("resetToDefaults"));
+      }
+    });
+  });
+
+  document.addEventListener("keydown", function (e) {
+    if (e.key !== "Escape") return;
+    if (confirmOpenFlag) { e.preventDefault(); closeConfirm(); return; }
+    if (daySheet.classList.contains("open")) { e.preventDefault(); closeDaySheet(); return; }
+    if (settingsSheet.classList.contains("open")) { e.preventDefault(); closeSettings(); return; }
+    if (drawer.classList.contains("open")) { e.preventDefault(); closeDrawer(); return; }
+    if (companyMenu.classList.contains("open")) { e.preventDefault(); closeCompanyMenu(); }
+  });
+
+  function initSplash() {
+    var splash = document.getElementById("splashScreen");
+    if (!splash) return;
+
+    var alreadyShown = false;
+    try {
+      alreadyShown = sessionStorage.getItem(SS_SPLASH) === "true";
+    } catch (e) {
+      alreadyShown = false;
+    }
+
+    if (alreadyShown) {
+      if (splash.parentNode) splash.parentNode.removeChild(splash);
+      document.body.classList.remove("splash-locked");
+      return;
+    }
+
+    try { sessionStorage.setItem(SS_SPLASH, "true"); } catch (e) {}
+
+    document.body.classList.add("splash-locked");
+
+    setTimeout(function () {
+      splash.classList.add("leaving");
+      splash.classList.add("hide");
+
+      setTimeout(function () {
+        if (splash && splash.parentNode) splash.parentNode.removeChild(splash);
+        document.body.classList.remove("splash-locked");
+      }, 520);
+    }, 4000);
+  }
+
+  initSplash();
+
+  try {
+    loadState();
+    applyTranslations();
+    renderAll();
+  } catch (err) {
+    console.error("Boot failed:", err);
+  }
+
+})();
+</script>
+
+</body>
+</html>
